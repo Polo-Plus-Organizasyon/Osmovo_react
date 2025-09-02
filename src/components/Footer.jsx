@@ -2,12 +2,14 @@ import React from "react";
 import styled from "styled-components";
 import { HiMail } from "react-icons/hi";
 import { IoMdCall } from "react-icons/io";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa"; // New: Social media icons
 import logo from "../assets/images/polo2.png"
 import iyzico from "../assets/images/logo_band_colored.svg";
-import paytr from "../assets/images/paytr.svg";
+import paytr from "../assets/images/paytr fix.svg";
 import mastercard from "../assets/images/mastercard-svgrepo-com.svg";
 import visa from "../assets/images/visa-svgrepo-com.svg";
 import troy from "../assets/images/troy-svgrepo-com.svg";
+import osmovo_logo from "../assets/images/osmovo_logo.svg";
 
 // Footer Styled Components
 const FooterContainer = styled.footer`
@@ -67,6 +69,23 @@ const FooterHeading = styled.h4`
   color: #333333;
   margin-bottom: 1.5rem;
   font-weight: 700;
+`;
+
+const SocialIconsContainer = styled.div` // New: Styled component for social media icons
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+const SocialIconLink = styled.a` // New: Styled component for individual social media icon links
+  color: #666666;
+  font-size: 1.5rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #000000;
+    transform: scale(1.1);
+  }
 `;
 
 const FooterLink = styled.a`
@@ -171,7 +190,7 @@ const PaymentLogos = styled.div`
   margin-top: 1.5rem;
 
   img {
-    height: 30px;
+    height: 50px;
     width: auto;
     transition: transform 0.3s ease;
   }
@@ -194,7 +213,7 @@ const Footer = () => {
         {/* Column 1: Logo, About Us, Contact Us */}
         <FooterColumn>
           <FooterLogoWrapper>
-            <img src={logo} alt="PoloPlus Logo" />
+            <img src={osmovo_logo} alt="PoloPlus Logo" />
           </FooterLogoWrapper>
           <FooterHeading>Hakkımızda</FooterHeading>
           <AboutUsText>
@@ -230,14 +249,23 @@ const Footer = () => {
 
         {/* Column 4: Subscribe For More */}
         <FooterColumn>
-          <FooterHeading>Daha Fazlası İçin Abone Olun</FooterHeading>
-          <SubscribeSection>
+          <FooterHeading>Bizi Takip Edin</FooterHeading> {/* New: Heading for social media */}
+          <SocialIconsContainer> {/* New: Social media icons container */}
+            <SocialIconLink href="#" target="_blank" rel="noopener noreferrer"><FaFacebook /></SocialIconLink>
+            <SocialIconLink href="#" target="_blank" rel="noopener noreferrer"><FaTwitter /></SocialIconLink>
+            <SocialIconLink href="#" target="_blank" rel="noopener noreferrer"><FaInstagram /></SocialIconLink>
+            <SocialIconLink href="#" target="_blank" rel="noopener noreferrer"><FaLinkedin /></SocialIconLink>
+          </SocialIconsContainer>
+
+          <FooterHeading style={{ marginTop: '2rem' }}>Haberdar Olun</FooterHeading> {/* New: Heading for newsletter */}
+          <SubscribeSection> {/* New: Newsletter subscription section */}
             <EmailInputGroup>
-              <EmailInputIcon><HiMail size={18} /></EmailInputIcon>
-              <EmailInput type="email" placeholder="E-postanızı Girin" />
+              <EmailInputIcon><HiMail size={20} /></EmailInputIcon>
+              <EmailInput type="email" placeholder="E-posta adresinizi giriniz" />
             </EmailInputGroup>
             <SubscribeButtonModern>Abone Ol</SubscribeButtonModern>
           </SubscribeSection>
+         
         </FooterColumn>
       </FooterContent>
 
