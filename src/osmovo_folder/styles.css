@@ -1,0 +1,1301 @@
+/* Common styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 
+    b
+}
+
+/* Chat container */
+#chat-container {
+    height: calc(100vh - 180px); /* Reduced from 200px for less vertical spacing */
+    max-height: calc(100vh - 180px); /* Adjusted to match height */
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)); 
+        /* url('/static/images/chat-bg.png'); */
+    background-size: 200px;
+    background-repeat: repeat;
+    flex: 1 1 auto; /* Allow container to grow and shrink while respecting height */
+    overscroll-behavior: contain; /* Improve mobile scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #a5b4fc #f1f1f1; /* Firefox */
+}
+
+/* Chat container scrollbar styling for webkit browsers */
+#chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chat-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#chat-container::-webkit-scrollbar-thumb {
+    background: #a5b4fc;
+    border-radius: 10px;
+    border: 1px solid #f1f1f1;
+}
+
+#chat-container::-webkit-scrollbar-thumb:hover {
+    background: #818cf8;
+}
+
+/* PDF sidebar */
+#sidebar {
+    z-index: 30;
+    border-left: 1px solid #e5e7eb;
+    max-height: calc(100vh - 2rem); /* Ensure sidebar doesn't exceed viewport */
+}
+
+/* PDF list styling - improved responsive behavior */
+#pdf-list {
+    /* Use flex-grow to fill available space rather than fixed height */
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0.5rem;
+    padding-bottom: 30px !important; /* Space for scroll indicator */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+    scroll-padding-bottom: 20px; /* Ensure content isn't hidden behind indicator */
+}
+
+/* PDF list container - enhanced responsiveness */
+.pdf-list-container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0; /* Important for flex containers to properly scroll */
+}
+
+#file-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Custom scrollbar for a cleaner look */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #a5b4fc; /* Changed to primary-300 for better visibility */
+    border-radius: 10px;
+    border: 1px solid #f1f1f1;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #818cf8; /* Changed to primary-400 for better contrast on hover */
+}
+
+/* Rate limit info icon styling */
+.rate-limit-info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #6366f1; /* primary-500 */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 50%;
+}
+
+.rate-limit-info-icon:hover {
+    color: #4f46e5; /* primary-600 */
+    transform: scale(1.1);
+    background-color: rgba(99, 102, 241, 0.1); /* primary-500 with low opacity */
+}
+
+/* Tooltip styling for rate limit info */
+.rate-limit-tooltip {
+    position: fixed; /* Changed from absolute to fixed for better mobile positioning */
+    z-index: 1000;
+    background-color: white;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 280px;
+    max-width: 320px;
+    font-size: 0.875rem;
+    border: 1px solid #e5e7eb; /* gray-200 */
+    animation: fadeIn 0.2s ease-out;
+    transition: opacity 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.rate-limit-tooltip.hidden {
+    display: none;
+    opacity: 0;
+}
+
+/* Responsive styles for rate limit tooltip */
+@media (max-width: 768px) {
+    .rate-limit-tooltip {
+        min-width: auto;
+        max-width: 90vw;
+        width: 90vw;
+        left: 5vw !important; /* Override inline styles */
+        transform: none !important; /* Override inline styles */
+    }
+    
+    .rate-limit-tooltip .grid {
+        grid-template-columns: 1fr !important; /* Stack vertically on mobile */
+        gap: 8px;
+    }
+    
+    .rate-limit-tooltip .grid > div {
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+    
+    .rate-limit-tooltip .grid > div:last-child {
+        border-bottom: none;
+    }
+}
+
+/* Rate limit status styling */
+#rate-limit-status {
+    transition: all 0.3s ease;
+    font-size: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#rate-limit-status .progress-bar {
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+
+#rate-limit-status .progress-value {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+#rate-limit-status .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+#rate-limit-status .grid > div {
+    display: flex;
+    flex-direction: column;
+}
+
+#model-select option:disabled {
+    color: #9ca3af; /* gray-400 */
+    font-style: italic;
+}
+
+/* Chat messages animation */
+.message-wrapper {
+    opacity: 0;
+    transform: translateY(15px);
+    animation: fadeInUp 0.4s ease-out forwards;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    min-width: 0; /* Allow flex items to shrink below their intrinsic width */
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.user .message-content {
+    background-color: #0ea5e9;
+    color: white;
+    border-radius: 18px 18px 0 18px;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 2px 5px rgba(14, 165, 233, 0.2);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.message.bot .message-content {
+    background-color: #f3f4f6;
+    border-radius: 18px 18px 18px 0;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.message.system .message-content {
+    background: linear-gradient(to right, #e0f2fe, #f0f9ff);
+    border-radius: 18px;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.message.loading .message-content {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* PDF list item styling */
+.pdf-item {
+    transition: all 0.25s ease;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.pdf-item:hover:not(.selected) {
+    background-color: #f9fafb;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+}
+
+.pdf-item.selected {
+    background-color: #eff6ff; /* blue-50 */
+    border-color: #93c5fd; /* blue-300 */
+    box-shadow: 0 2px 5px rgba(59, 130, 246, 0.15);
+}
+
+/* PDF item checkbox styling */
+.pdf-checkbox {
+    cursor: pointer;
+    border-color: #cbd5e1; /* slate-300 */
+}
+
+.pdf-checkbox:checked {
+    border-color: #4f46e5;
+    background-color: #4f46e5;
+}
+
+/* PDF icon styling */
+.pdf-icon {
+    color: #ef4444; /* red-500 for PDF icon */
+    flex-shrink: 0;
+}
+
+/* PDF filename styling */
+.pdf-filename {
+    font-size: 0.875rem;
+    color: #374151; /* gray-700 */
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-left: 0.5rem;
+    transition: color 0.2s;
+}
+
+.selected .pdf-filename {
+    color: #1e40af; /* blue-800 */
+    font-weight: 500;
+}
+
+/* Delete button styling - Enhanced version */
+.pdf-delete-btn {
+    opacity: 0.65;
+    transition: all 0.3s ease;
+    border-radius: 0.5rem;
+    padding: 0.35rem;
+    position: relative;
+    overflow: hidden;
+    color: #9ca3af; /* gray-400 - slightly darker base color */
+    transform-origin: center;
+}
+
+.pdf-delete-btn:hover {
+    background-color: #fee2e2; /* red-100 */
+    color: #ef4444; /* red-500 - brighter red on hover */
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+    transform: scale(1.15);
+}
+
+.pdf-delete-btn:active {
+    transform: scale(0.92);
+    transition: transform 0.1s;
+}
+
+/* Ripple animation for the delete button */
+.pdf-delete-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(239, 68, 68, 0.3); /* red with opacity */
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.5s, opacity 0.4s;
+}
+
+.pdf-delete-btn:active::after {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 1;
+    transition: transform 0s, opacity 0.1s;
+}
+
+/* Delete icon pulsing animation on hover */
+.pdf-delete-btn:hover svg {
+    animation: trashCan 1s ease-in-out;
+}
+
+@keyframes trashCan {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(-10deg); }
+    30% { transform: rotate(12deg); }
+    45% { transform: rotate(-10deg); }
+    60% { transform: rotate(5deg); }
+    75% { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Empty state styling */
+.pdf-empty-state {
+    color: #94a3b8; /* slate-400 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+    border: 2px dashed #e2e8f0; /* slate-200 */
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.pdf-empty-icon {
+    margin-bottom: 0.75rem;
+    color: #cbd5e1; /* slate-300 */
+}
+
+/* PDF Count badge styling */
+#pdf-count {
+    background-color: #4f46e5; /* primary-600 */
+    color: white;
+    font-weight: 600;
+    border-radius: 9999px;
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+/* Animation for newly added PDFs */
+@keyframes pdfAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pdf-item-new {
+    animation: pdfAppear 0.4s ease-out forwards;
+}
+
+/* Custom checkbox styles */
+.custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    border: 1px solid #d1d5db;
+    background-color: white;
+}
+
+.custom-checkbox::after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+input:checked + .custom-checkbox {
+    background-color: #0ea5e9;
+    border-color: #0ea5e9;
+}
+
+input:checked + .custom-checkbox::after {
+    display: block;
+}
+
+/* Math rendering styles - ensure they don't break layout */
+.katex-display {
+    margin: 0.75em 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.5em 0;
+    font-size: 1.1em; /* Slightly larger for readability */
+    max-width: 100%;
+    position: relative;
+}
+
+.katex {
+    font-size: 1.1em;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* Prevent equations from overflowing on mobile */
+.katex-html {
+    max-width: 100%;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+/* For inline math */
+.katex-inline {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* MathJax specific styles */
+.MathJax_Display {
+    margin: 0.75em 0 !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    font-size: 1.1em; /* Slightly larger for readability */
+    max-width: 100%;
+}
+
+/* Container for math rendering in bot messages */
+.message-wrapper.bot .message-content .math-container {
+    overflow-x: auto;
+    margin: 8px 0;
+    padding: 8px 0;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+}
+
+/* Highlight math expressions slightly */
+.message-wrapper.bot .katex-display,
+.message-wrapper.bot mjx-container[jax="CHTML"][display="true"] {
+    padding: 5px 10px;
+    background-color: rgba(244, 245, 248, 0.7);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #chat-container {
+        height: calc(100vh - 170px); /* Reduced spacing for mobile */
+    }
+    #sidebar {
+        width: 100%;
+        max-width: 320px;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        max-height: 100vh; /* Full height on mobile */
+    }
+    
+    /* Make PDF list take all available height on mobile */
+    .pdf-list-container {
+        flex-grow: 1;
+        min-height: 0;
+    }
+    
+    #pdf-list {
+        height: 100%;
+        max-height: none; /* Remove fixed max-height and rely on container */
+        padding-bottom: 20px !important;
+    }
+    
+    /* Optimize scroll indicator for mobile */
+    #scroll-indicator {
+        height: 2rem; /* Smaller height on mobile */
+    }
+}
+
+/* Additional media query for larger tablets */
+@media (min-width: 769px) and (max-width: 1023px) {
+    #pdf-list {
+        max-height: calc(100vh - 400px);
+    }
+}
+
+/* For larger desktops */
+@media (min-width: 1024px) {
+    #pdf-list {
+        max-height: calc(100vh - 330px); /* Reduced from 350px for more space */
+    }
+}
+
+/* SweetAlert2 Customizations (Optional) */
+.swal2-popup {
+    font-family: 'Inter', sans-serif !important;
+    border-radius: 0.75rem !important; /* 12px */
+}
+.swal2-title {
+    font-size: 1.25rem !important; /* 20px */
+    font-weight: 600 !important;
+}
+.swal2-html-container {
+    font-size: 0.95rem !important; /* 15px */
+}
+.swal2-confirm {
+    border-radius: 0.5rem !important; /* 8px */
+}
+.swal2-cancel {
+    border-radius: 0.5rem !important; /* 8px */
+}
+
+/* Loading animation for bot messages */
+.message-wrapper.bot .loading-dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #a5b4fc; /* primary-300 */
+    margin: 0 2px;
+    animation: bounceDots 1.4s infinite ease-in-out both;
+}
+.message-wrapper.bot .loading-dots span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+.message-wrapper.bot .loading-dots span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounceDots {
+    0%, 80%, 100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1.0);
+    }
+}
+
+/* PDF list container and scroll indicator */
+.pdf-list-container {
+    position: relative;
+    height: auto;
+    overflow-y: visible;
+    padding-bottom: 2px; /* Add slight padding at bottom */
+}
+
+#scroll-indicator {
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    height: 2.5rem; /* Make taller */
+    pointer-events: none; /* Ensure it doesn't interfere with clicks */
+}
+
+#scroll-indicator.hidden {
+    opacity: 0;
+}
+
+/* Add end-of-list indicator */
+.pdf-list-end-marker {
+    height: 20px;
+    margin-top: 10px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* SweetAlert2 Overlay Fixes */
+.swal-overlay-container {
+    position: fixed !important;
+    z-index: 9999 !important; 
+    padding: 0 !important;
+}
+
+.swal-overlay-popup {
+    margin: 0 auto !important;
+}
+
+.swal2-container {
+    position: fixed !important;
+    z-index: 9999 !important;
+}
+
+.swal2-popup {
+    margin: 0 auto !important;
+}
+
+body.swal2-shown {
+    overflow-y: auto !important;
+    padding-right: 0 !important;
+}
+
+body.swal2-shown:not(.swal2-no-backdrop) {
+    overflow-y: auto !important;
+    padding-right: 0 !important;
+}
+
+@media (min-width: 1024px) {
+    #pdf-list {
+        max-height: calc(100vh - 370px); /* Reduced from 390px */
+    }
+}
+
+/* Clear Chat Button Styling - Enhanced and Animated */
+#clear-chat, #clear-chat-mobile {
+    transform-origin: center;
+    box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+#clear-chat:hover, #clear-chat-mobile:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(239, 68, 68, 0.25);
+    background-color: rgba(254, 202, 202, 0.7); /* red-200 with transparency */
+}
+
+#clear-chat:active, #clear-chat-mobile:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+}
+
+/* Ripple effect for the buttons */
+#clear-chat::after, #clear-chat-mobile::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background-color: rgba(239, 68, 68, 0.3); /* red with opacity */
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.5s, opacity 0.4s;
+}
+
+#clear-chat:active::after, #clear-chat-mobile:active::after {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 1;
+    transition: transform 0s, opacity 0.1s;
+}
+
+/* Trash icon animation */
+#clear-chat svg, #clear-chat-mobile svg {
+    transition: transform 0.3s ease;
+}
+
+#clear-chat:hover svg, #clear-chat-mobile:hover svg {
+    animation: trashWiggle 1s ease-in-out;
+}
+
+/* Trash wiggle animation */
+@keyframes trashWiggle {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(-15deg); }
+    30% { transform: rotate(15deg); }
+    45% { transform: rotate(-10deg); }
+    60% { transform: rotate(10deg); }
+    75% { transform: rotate(-5deg); }
+    85% { transform: rotate(5deg); }
+    92% { transform: rotate(-2deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Pulsing effect for text */
+#clear-chat:hover span {
+    animation: textPulse 1.5s infinite;
+}
+
+@keyframes textPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Copy button styling for bot messages - Enhanced design */
+.copy-button {
+    position: absolute;
+    top: 0.5rem;        
+    right: 0.5rem;      
+    opacity: 0.3; /* Make slightly visible by default */
+    transition: all 0.2s ease;
+    z-index: 5;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(99, 102, 241, 0.2); /* Light border with primary color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 0.35rem;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-wrapper.bot .message-content:hover .copy-button {
+    opacity: 1;
+    animation: pulseButton 1.5s infinite;
+}
+
+.copy-button:hover {
+    transform: scale(1.15);
+    background-color: rgba(99, 102, 241, 0.1); /* primary-500 with low opacity */
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 3px 6px rgba(99, 102, 241, 0.25);
+    color: #4f46e5; /* primary-600 */
+}
+
+.copy-button:active {
+    transform: scale(0.92);
+}
+
+/* Pulsing animation for the copy button */
+@keyframes pulseButton {
+    0%, 100% { box-shadow: 0 2px 5px rgba(99, 102, 241, 0.1); }
+    50% { box-shadow: 0 2px 15px rgba(99, 102, 241, 0.25); }
+}
+
+/* Success animation with enhanced styling */
+.copy-button.success {
+    background-color: rgba(16, 185, 129, 0.15); /* green-500 with low opacity */
+    border-color: #10b981; /* green-500 */
+    color: #059669; /* green-600 */
+    animation: copySuccess 0.6s ease-in-out;
+}
+
+@keyframes copySuccess {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25); }
+    80% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+/* Copy button styling for elements within bot messages */
+.element-copy-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: #6366f1;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    z-index: 10;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Show copy button on hover */
+pre:hover .element-copy-btn,
+.katex-display:hover .element-copy-btn,
+mjx-container:hover .element-copy-btn,
+table:hover .element-copy-btn,
+.message-wrapper.bot img:hover + .element-copy-btn,
+.visual-element:hover .element-copy-btn {
+    opacity: 1;
+}
+
+.element-copy-btn:hover {
+    background-color: rgba(255, 255, 255, 0.95);
+    transform: scale(1.1);
+    color: #4f46e5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.element-copy-btn:active {
+    transform: scale(0.95);
+}
+
+/* Position adjustments for different element types */
+pre {
+    position: relative;
+}
+
+.katex-display {
+    position: relative;
+}
+
+mjx-container[jax="CHTML"][display="true"] {
+    position: relative;
+}
+
+/* Make tables position relative for absolute positioning of copy button */
+.message-wrapper.bot table {
+    position: relative;
+}
+
+/* For images */
+.message-wrapper.bot .image-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Success animation for copy action */
+.element-copy-btn.success {
+    color: #10b981;
+    animation: copySuccess 0.3s ease;
+}
+
+@keyframes copySuccess {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Enhanced styling for code blocks and nested markdown */
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background-color: #1e293b; /* slate-800 */
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 0.75rem 0;
+    overflow-x: auto;
+    position: relative;
+}
+
+pre code {
+    color: #f1f5f9; /* slate-100 */
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    display: block;
+}
+
+/* Style for nested code blocks within code blocks */
+pre code .nested-code-block {
+    background-color: #334155; /* slate-700 */
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    display: block;
+    border-left: 3px solid #94a3b8; /* slate-400 */
+}
+
+/* Visual indicator for nested code blocks */
+.message-wrapper.bot .nested-code-marker {
+    color: #94a3b8; /* slate-400 */
+    font-style: italic;
+    margin: 0.25rem 0;
+    display: block;
+}
+
+/* Special formatting for ASCII art/diagrams in code blocks */
+pre code.language-ascii-art,
+pre code.language-diagram {
+    font-family: 'Courier New', monospace;
+    line-height: 1.2;
+    white-space: pre;
+}
+
+/* Markdown styling */
+.message-wrapper.bot .message-content h1,
+.message-wrapper.bot h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 0.3rem;
+}
+
+.message-wrapper.bot .message-content h2,
+.message-wrapper.bot h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0.8rem 0 0.4rem;
+}
+
+.message-wrapper.bot .message-content h3,
+.message-wrapper.bot h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0.7rem 0 0.3rem;
+}
+
+.message-wrapper.bot .message-content ul,
+.message-wrapper.bot ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.message-wrapper.bot .message-content ol,
+.message-wrapper.bot ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.message-wrapper.bot .message-content li,
+.message-wrapper.bot li {
+    margin-bottom: 0.25rem;
+}
+
+.message-wrapper.bot .message-content a,
+.message-wrapper.bot a {
+    color: #4f46e5;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.message-wrapper.bot .message-content blockquote,
+.message-wrapper.bot blockquote {
+    border-left: 4px solid #e5e7eb;
+    padding-left: 1rem;
+    color: #4b5563;
+    font-style: italic;
+    margin: 0.7rem 0;
+}
+
+.message-wrapper.bot .message-content table,
+.message-wrapper.bot table {
+    border-collapse: collapse;
+    margin: 0.7rem 0;
+    font-size: 0.9em;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.message-wrapper.bot .message-content th,
+.message-wrapper.bot th {
+    background-color: #f3f4f6;
+    color: #1f2937;
+    font-weight: 600;
+    padding: 0.6rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.message-wrapper.bot .message-content td,
+.message-wrapper.bot td {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.message-wrapper.bot .message-content tr:nth-child(even) td,
+.message-wrapper.bot tr:nth-child(even) td {
+    background-color: #f9fafb;
+}
+
+.message-wrapper.bot .message-content img,
+.message-wrapper.bot img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.375rem;
+    margin: 0.5rem 0;
+    position: relative;
+}
+
+/* Better styling for code inline elements */
+.message-wrapper.bot .message-content code:not([class*="language-"]),
+.message-wrapper.bot code:not([class*="language-"]) {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    padding: 0.2em 0.4em;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 0.875em;
+    white-space: pre-wrap;
+}
+
+/* Conversation sidebar styles */
+#conversation-sidebar {
+    z-index: 30;
+    border-right: 1px solid #e5e7eb;
+    max-height: calc(100vh - 2rem); /* Ensure sidebar doesn't exceed viewport */
+}
+
+#conversation-sidebar .conversation-item {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border-left: 4px solid transparent;
+}
+
+#conversation-sidebar .conversation-item:hover {
+    background-color: #f9fafb;
+    transform: translateX(2px);
+}
+
+#conversation-sidebar .conversation-item.active {
+    background-color: #eff6ff;
+    border-left-color: #3b82f6;
+}
+
+#conversation-sidebar .conversation-item .delete-conversation {
+    transition: all 0.2s ease;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+}
+
+#conversation-sidebar .conversation-item .delete-conversation:hover {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* Conversation item animations */
+.conversation-item {
+    animation: conversationAppear 0.3s ease-out;
+}
+
+@keyframes conversationAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile responsive adjustments for conversations */
+@media (max-width: 768px) {
+    #conversation-sidebar {
+        width: 100%;
+        max-width: 320px;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+        max-height: 100vh; /* Full height on mobile */
+    }
+    
+    #conversations-list {
+        max-height: calc(100vh - 140px); /* Adjust for mobile header */
+    }
+    
+    #conversation-sidebar.translate-x-full {
+        transform: translateX(-100%);
+    }
+    
+    #conversation-sidebar:not(.translate-x-full) {
+        transform: translateX(0);
+    }
+}
+
+/* Adjust main chat area when conversation sidebar is visible */
+@media (min-width: 769px) {
+    .flex.container.mx-auto {
+        max-width: none;
+        margin: 0;
+        padding: 1rem;
+    }
+}
+
+/* New conversation button styling */
+#new-conversation {
+    transition: all 0.2s ease;
+}
+
+#new-conversation:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+/* Enhanced toggle buttons with arrow animation */
+#toggle-conversations, #toggle-conversations-mobile, #toggle-documents {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    background-color: rgba(99, 102, 241, 0.05);
+}
+
+#toggle-conversations:hover, #toggle-conversations-mobile:hover, #toggle-documents:hover {
+    transform: scale(1.1);
+    background-color: rgba(99, 102, 241, 0.15);
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.25);
+}
+
+#toggle-conversations svg, #toggle-conversations-mobile svg, #toggle-documents svg {
+    transition: transform 0.3s ease;
+}
+
+#toggle-conversations:hover svg, #toggle-conversations-mobile:hover svg {
+    transform: translateX(-3px);
+}
+
+#toggle-documents:hover svg {
+    transform: translateX(3px);
+}
+
+/* Rotated arrow when sidebar is closed */
+#toggle-conversations.active svg, #toggle-conversations-mobile.active svg {
+    transform: rotate(180deg);
+}
+
+#toggle-documents.active svg {
+    transform: rotate(180deg);
+}
+
+/* Scrollbar for conversations list */
+#conversations-list {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+    max-height: calc(100vh - 180px); /* Set max height to enable scrolling */
+    overflow-y: auto; /* Enable vertical scrolling */
+    padding-right: 8px; /* Add padding for scrollbar space */
+}
+
+#conversations-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#conversations-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#conversations-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+#conversations-list::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Three-column layout on larger screens */
+@media (min-width: 1024px) {
+    .container.mx-auto {
+        max-width: calc(100vw - 2rem);
+    }
+    
+    #conversation-sidebar,
+    #sidebar {
+        flex-shrink: 0;
+    }
+    
+    /* Ensure proper spacing between sidebars and main content */
+    .flex.flex-1.overflow-hidden.container.mx-auto.py-4.md\:py-6 {
+        gap: 1.5rem;
+    }
+}
+
+/* Conversation title truncation */
+.conversation-item h4 {
+    line-height: 1.2;
+    max-height: 2.4em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Date and message count styling */
+.conversation-item p {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+
+/* Active conversation highlighting */
+.conversation-item.bg-primary-50 {
+    box-shadow: inset 3px 0 0 #4f46e5;
+}
+
+/* Smooth transitions for sidebar toggles */
+#conversation-sidebar,
+#sidebar {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Loading state for conversations */
+.conversations-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    color: #6b7280;
+}
+
+.conversations-loading svg {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Empty state for conversations */
+.conversations-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #9ca3af;
+}
+
+.conversations-empty svg {
+    margin: 0 auto 0.75rem;
+    opacity: 0.5;
+}
+
+/* Conversation list container to ensure proper scrolling */
+.conversations-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0; /* Important for flex containers to properly scroll */
+}
+
+/* Ensure the conversations list container takes remaining space */
+#conversation-sidebar .flex-1 {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Upload button pulsing animation */
+@keyframes uploadPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+}
+
+.upload-button-pulse {
+    animation: uploadPulse 1.5s infinite;
+}

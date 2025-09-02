@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Satın Alma - PDF Sohbet Robotu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light-bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: rgb(200, 200, 231);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.03"><circle cx="30" cy="30" r="2"/></g></g></svg>');
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 0;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--glass-border);
+            width: 100%;
+            max-width: 1100px;
+            overflow: hidden;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: var(--primary-gradient);
+            padding: 32px;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: var(--primary-gradient);
+            clip-path: ellipse(100% 100% at 50% 0%);
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 40px 32px;
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(203, 213, 225, 0.3);
+        }
+
+        .plan-info h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--dark);
+        }
+
+        .plan-meta {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .plan-pricing {
+            text-align: right;
+        }
+
+        .price-display {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+
+        .price-interval {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(203, 213, 225, 0.2);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(203, 213, 225, 0.2);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            background: var(--accent-gradient);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid rgba(203, 213, 225, 0.3);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .form-group input::placeholder {
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 140px;
+            gap: 16px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            border: none;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            margin-top: 24px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-primary::before {
+            content: '🔒';
+            font-size: 18px;
+        }
+
+        .checkout-summary {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(203, 213, 225, 0.2);
+            position: sticky;
+            top: 40px;
+        }
+
+        .summary-header {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--dark);
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(203, 213, 225, 0.2);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(203, 213, 225, 0.1);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px dashed rgba(203, 213, 225, 0.3);
+        }
+
+        .summary-total .total-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .summary-total .total-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .payment-status {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-status.loading {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .payment-status.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .payment-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            color: var(--success);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .security-badge::before {
+            content: '🛡️';
+            font-size: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .checkout-summary {
+                position: static;
+                order: -1;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .content {
+                padding: 32px 24px;
+            }
+
+            .header {
+                padding: 24px;
+            }
+
+            .header-title {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .plan-header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header-title {
+                font-size: 24px;
+            }
+
+            .price-display {
+                font-size: 24px;
+            }
+        }
+
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 35%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 65%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
+    </div>
+
+    <div class="container">
+        <div class="main-card">
+            <div class="header">
+                <h1 class="header-title">Güvenli Ödeme</h1>
+                <p class="header-subtitle">Plan seçiminizi tamamlayın ve güvenli ödeme yapın</p>
+            </div>
+
+            <div class="content">
+                <div class="plan-header">
+                    <div class="plan-info">
+                        <h2 id="plan-name">Plan</h2>
+                        <div class="plan-meta" id="plan-desc">Plan açıklaması</div>
+                    </div>
+                    <div class="plan-pricing">
+                        <div class="price-display" id="plan-price">₺0.00</div>
+                        <div class="price-interval" id="plan-interval">Aylık</div>
+                    </div>
+                </div>
+
+                <div class="main-content">
+                    <div class="form-section">
+                        <h3 class="section-title">Plan Özellikleri</h3>
+                        <ul id="plan-features" class="plan-features">
+                            <li>Depolama: <strong id="plan-storage">-</strong></li>
+                            <li>Soru limiti: <strong id="plan-questions">-</strong></li>
+                            <li>Yenileme: <strong id="plan-renewal">-</strong> gün</li>
+                        </ul>
+
+                        <h3 class="section-title">Fatura & Gönderim Bilgileri</h3>
+                        <form id="checkout-form">
+                            <div class="form-group">
+                                <label for="name">Ad Soyad *</label>
+                                <input id="name" name="name" required placeholder="Ahmet Yılmaz" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email Adresi *</label>
+                                <input id="email" type="email" name="email" required placeholder="you@example.com" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">Adres *</label>
+                                <input id="address" name="address" type="text" required placeholder="Mah. Cad. No:..." />
+                            </div>
+
+                            <div class="field-row">
+                                <div class="form-group">
+                                    <label for="phone">Telefon</label>
+                                    <input id="phone" name="phone" type="text" placeholder="0555xxxxxxx" />
+                                </div>
+                                
+                            </div>
+
+                            <button class="btn-primary" id="pay-btn" type="submit">
+                                Güvenli Ödeme
+                            </button>
+
+                            <div class="security-badge">
+                                256-bit SSL ile korunmaktadır
+                            </div>
+                        </form>
+                    </div>
+
+                    <aside class="checkout-summary">
+                        <h3 class="summary-header">Sipariş Özeti</h3>
+                        
+                        <div class="summary-item">
+                            <span id="summary-plan">Plan</span>
+                            <strong id="summary-price">₺0.00</strong>
+                        </div>
+
+                        <div class="summary-total">
+                            <div class="total-label">Toplam Tutar</div>
+                            <div class="total-price">
+                                <span id="total-label">Ara Toplam</span>
+                                <span id="total-price">₺0.00</span>
+                            </div>
+                        </div>
+
+                        <div id="payment-status" class="payment-status" style="display: none;"></div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Read planId from URL (/checkout/{planId}) or query param
+        function getPlanIdFromPath() {
+            const path = location.pathname || '';
+            const m = path.match(/\/checkout\/(\d+)/);
+            if (m) return m[1];
+            const qp = new URLSearchParams(location.search).get('plan');
+            return qp;
+        }
+
+        function formatStorage(s) { 
+            const n = parseFloat(s); 
+            if (isNaN(n)) return s; 
+            if (n >= 1024) { 
+                const g = n / 1024; 
+                return `${g.toFixed(2).replace(/\.00$/, '')} GB` 
+            } 
+            return `${Math.round(n)} MB` 
+        }
+
+        async function loadPlan(planId) {
+            try {
+                const res = await fetch('https://api.osmovo.com/api/plans');
+                const data = await res.json();
+                const plan = (data.plans || []).find(p => String(p.id) === String(planId)) || (data.plans || [])[0];
+                if (!plan) return;
+                
+                document.getElementById('plan-name').textContent = plan.name;
+                document.getElementById('plan-desc').textContent = plan.description || '';
+                document.getElementById('plan-price').textContent = plan.is_free ? 'Ücretsiz' : (plan.price + ' ' + (plan.currency || 'TRY'));
+                document.getElementById('plan-storage').textContent = formatStorage(plan.storage_limit);
+                document.getElementById('plan-questions').textContent = plan.question_limit;
+                document.getElementById('plan-renewal').textContent = plan.renewal_days;
+                document.getElementById('plan-id').textContent = 'Plan ID: ' + plan.id;
+                document.getElementById('summary-plan').textContent = plan.name;
+                document.getElementById('summary-price').textContent = plan.is_free ? 'Ücretsiz' : (plan.price + ' ' + (plan.currency || 'TRY'));
+
+                // compute total using quantity
+                const qtyEl = document.getElementById('quantity');
+                function updateTotal() {
+                    const qty = parseInt(qtyEl.value, 10) || 1;
+                    const unit = plan.is_free ? 0 : (Number(plan.price) || 0);
+                    const total = unit * qty;
+                    document.getElementById('total-price').textContent = plan.is_free ? 'Ücretsiz' : (total + ' ' + (plan.currency || 'TRY'));
+                }
+                qtyEl.addEventListener('input', updateTotal);
+                updateTotal();
+
+                // attach handler
+                const form = document.getElementById('checkout-form');
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    handleCheckout(plan);
+                });
+            } catch (err) { 
+                console.error(err) 
+            }
+        }
+
+        function isLoggedIn() { 
+            return Boolean(localStorage.getItem('authToken') || sessionStorage.getItem('authToken')) || /(^|; )\s*token=/.test(document.cookie) 
+        }
+
+        async function handleCheckout(plan) {
+            if (!isLoggedIn()) {
+                // redirect to login with redirect back to this full path
+                const redirect = encodeURIComponent(location.pathname + location.search);
+                window.location.href = '/login.html?redirect=' + redirect;
+                return;
+            }
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const quantity = parseInt(document.getElementById('quantity').value, 10) || 1;
+
+            if (!name || !email || !address) {
+                showPaymentStatus('Lütfen ad, e-posta ve adres bilgilerini doldurun.', 'error');
+                return;
+            }
+
+            const payload = {
+                user_basket: [{ id: plan.id, quantity: quantity }],
+                user_name: name,
+                user_address: address,
+                user_phone: phone || ''
+            };
+
+            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            const payBtn = document.getElementById('pay-btn');
+            payBtn.disabled = true;
+            const origText = payBtn.textContent;
+            payBtn.textContent = 'İşleniyor...';
+            showPaymentStatus('Ödeme yönlendiriliyor...', 'loading');
+
+            try {
+                const res = await fetch('https://api.osmovo.com/api/payment/process', {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { 'Authorization': 'Bearer ' + token } : {}),
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok) {
+                    // backend may return redirect URL to payment provider or success
+                    if (data.redirect) {
+                        try { 
+                            window.location.href = data.redirect; 
+                            return; 
+                        } catch (e) { 
+                            window.open(data.redirect, '_blank'); 
+                            return; 
+                        }
+                    }
+
+                    // show success message
+                    showPaymentStatus(data.message || 'Ödeme işlemi başlatıldı. Yönlendiriliyorsunuz...', 'success');
+
+                    // if backend returns an order id or next_url, handle accordingly
+                    if (data.next_url) { 
+                        setTimeout(() => window.location.href = data.next_url, 1200); 
+                        return; 
+                    }
+
+                    setTimeout(() => { 
+                        window.location.href = 'index.html'; 
+                    }, 1400);
+                } else {
+                    const err = data.error || data.message || 'Ödeme sırasında hata oluştu.';
+                    showPaymentStatus(err, 'error');
+                }
+            } catch (err) {
+                console.error('Payment error', err);
+                showPaymentStatus('Sunucuya bağlanırken hata oluştu. Lütfen tekrar deneyin.', 'error');
+            } finally {
+                payBtn.disabled = false;
+                payBtn.textContent = origText;
+            }
+        }
+
+        function showPaymentStatus(msg, type) {
+            const el = document.getElementById('payment-status');
+            el.textContent = msg;
+            el.className = `payment-status ${type}`;
+            el.style.display = 'block';
+            
+            // Animate in
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                el.style.transition = 'all 0.3s ease';
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        // Initialize floating particles animation
+        function initParticles() {
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach((particle, index) => {
+                const randomTop = Math.random() * 100;
+                particle.style.top = randomTop + '%';
+                particle.style.animationDelay = (Math.random() * 6) + 's';
+            });
+        }
+
+        // Initialize everything
+        (function () {
+            const planId = getPlanIdFromPath() || new URLSearchParams(location.search).get('plan');
+            loadPlan(planId);
+            initParticles();
+        })();
+    </script>
+</body>
+
+</html>

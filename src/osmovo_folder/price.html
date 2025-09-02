@@ -1,0 +1,839 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Learning Module Card</title>
+    <style>
+        :root {
+            --primary: #4371e5;
+            --secondary: #ff7d5c;
+            --accent: #3df5a7;
+            --light: #f9f9fa;
+            --dark: #282c34;
+            --success: #4cd964;
+            --card-radius: 16px;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+       
+        .container {
+            width: 100%;
+            max-width: none;
+            height: auto;
+            display: block;
+            gap: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        p.intro {
+            color: #5a6072;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns on desktop */
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        /* Card visual refresh */
+        .module-card {
+            position: relative;
+            background: linear-gradient(180deg, var(--light), #ffffff);
+            border-radius: var(--card-radius);
+            padding: 1.25rem;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+            cursor: pointer;
+            overflow: hidden;
+            border: 1px solid rgba(67,113,229,0.06);
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .module-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(37,99,235,0.08);
+        }
+
+        .price-badge {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: var(--primary);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            box-shadow: 0 6px 16px rgba(37,99,235,0.12);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 1rem;
+        }
+
+        .buy-btn {
+            background: linear-gradient(90deg, var(--primary), #2e63d8);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 8px 20px rgba(37,99,235,0.08);
+        }
+
+        .card-meta {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .module-card:nth-child(2) .card-icon {
+            background: var(--secondary);
+        }
+
+        .module-card:nth-child(3) .card-icon {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        .module-card:nth-child(4) .card-icon {
+            background: #b18cfe;
+        }
+
+        .difficulty {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--light);
+            background: var(--dark);
+        }
+
+        .difficulty.beginner {
+            background: #4cd964;
+        }
+
+        .difficulty.intermediate {
+            background: #ffce3a;
+            color: #333;
+        }
+
+        .difficulty.advanced {
+            background: #ff3b30;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            font-size: 0.85rem;
+            color: #5a6072;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .progress-container {
+            margin-top: auto;
+            background: #eaedf6;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .module-card:nth-child(2) .progress-bar {
+            background: var(--secondary);
+        }
+
+        .module-card:nth-child(3) .progress-bar {
+            background: var(--accent);
+        }
+
+        .module-card:nth-child(4) .progress-bar {
+            background: #b18cfe;
+        }
+
+        .quick-facts {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            padding: 1rem 1.5rem;
+            transform: translateY(100%);
+            transition: var(--transition);
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+            border-bottom-left-radius: var(--card-radius);
+            border-bottom-right-radius: var(--card-radius);
+        }
+
+        .module-card:hover .quick-facts {
+            transform: translateY(0);
+        }
+
+        .quick-facts h4 {
+            font-size: 0.9rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-facts h4 svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .fact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .fact-icon {
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .module-card:nth-child(2) .fact-icon {
+            color: var(--secondary);
+        }
+
+        .module-card:nth-child(3) .fact-icon {
+            color: var(--accent);
+        }
+
+        .module-card:nth-child(4) .fact-icon {
+            color: #b18cfe;
+        }
+
+        .start-learning {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.7rem 1.2rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .start-learning:hover {
+            background: #2e5cd5;
+            transform: translateY(-2px);
+        }
+
+        .currently-learning {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--success);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.3rem 0.6rem;
+            border-radius: 16px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: var(--transition);
+        }
+
+        .module-card.active .currently-learning {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .completion-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: var(--transition);
+        }
+
+        .module-card.completed .completion-badge {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .card-time {
+            font-size: 0.8rem;
+            color: #5a6072;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .module-card {
+                min-height: 180px;
+            }
+        }
+
+        /* Pattern decorations */
+        .pattern-dots {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-image: radial-gradient(var(--primary) 2px, transparent 2px);
+            background-size: 10px 10px;
+            opacity: 0.1;
+            z-index: 0;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .module-card:nth-child(1) .pattern-dots {
+            top: -20px;
+            right: -20px;
+            background-image: radial-gradient(var(--primary) 2px, transparent 2px);
+        }
+
+        .module-card:nth-child(2) .pattern-dots {
+            bottom: -20px;
+            left: -20px;
+            background-image: radial-gradient(var(--secondary) 2px, transparent 2px);
+        }
+
+        .module-card:nth-child(3) .pattern-dots {
+            top: -20px;
+            left: 40%;
+            background-image: radial-gradient(var(--accent) 2px, transparent 2px);
+        }
+
+        .module-card:nth-child(4) .pattern-dots {
+            bottom: 30px;
+            right: -20px;
+            background-image: radial-gradient(#b18cfe 2px, transparent 2px);
+        }
+
+        .module-card:hover .pattern-dots {
+            opacity: 0.2;
+            transform: scale(1.2);
+        }
+
+        /* Wave animation */
+        .wave-animation {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+            background-size: 300% 100%;
+            border-bottom-left-radius: var(--card-radius);
+            border-bottom-right-radius: var(--card-radius);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: waveMove 6s linear infinite;
+        }
+
+        @keyframes waveMove {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 300% 0;
+            }
+        }
+
+        .module-card:hover .wave-animation {
+            opacity: 1;
+        }
+
+        /* Pulse animation for active module */
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(67, 113, 229, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(67, 113, 229, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(67, 113, 229, 0);
+            }
+        }
+
+        .module-card.active {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="module-grid">
+            <!-- Module 1 -->
+            <div class="module-card active" data-progress="35">
+                <div class="pattern-dots"></div>
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+                        </svg>
+                    </div>
+                    <span class="difficulty beginner">Beginner</span>
+                </div>
+                <h3 class="card-title">Visual Design Fundamentals</h3>
+                <p class="card-description">Learn the core principles of visual hierarchy, color theory, and layout composition for digital interfaces.</p>
+                <div class="card-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    3.5 hours · 12 lessons
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="currently-learning">Currently Learning</div>
+                <div class="quick-facts">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        Quick Facts
+                    </h4>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Includes hands-on design exercises and interactive quizzes</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Learn to analyze and critique real-world designs</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>No design tools required — all web-based exercises</span>
+                    </div>
+                </div>
+                <div class="wave-animation"></div>
+            </div>
+
+            <!-- Module 2 -->
+            <div class="module-card" data-progress="0">
+                <div class="pattern-dots"></div>
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <span class="difficulty intermediate">Intermediate</span>
+                </div>
+                <h3 class="card-title">Responsive Prototyping</h3>
+                <p class="card-description">Master interactive prototyping techniques for responsive designs that adapt to any device.</p>
+                <div class="card-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    5 hours · 8 lessons
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="quick-facts">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        Quick Facts
+                    </h4>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Create high-fidelity interactive mockups from scratch</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Test usability across multiple device breakpoints</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Includes capstone project for your design portfolio</span>
+                    </div>
+                </div>
+                <div class="wave-animation"></div>
+            </div>
+
+            <!-- Module 3 -->
+            <div class="module-card" data-progress="0">
+                <div class="pattern-dots"></div>
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <line x1="21.17" y1="8" x2="12" y2="8"></line>
+                            <line x1="3.95" y1="6.06" x2="8.54" y2="14"></line>
+                            <line x1="10.88" y1="21.94" x2="15.46" y2="14"></line>
+                        </svg>
+                    </div>
+                    <span class="difficulty intermediate">Intermediate</span>
+                </div>
+                <h3 class="card-title">Animation Principles</h3>
+                <p class="card-description">Create meaningful micro-interactions and transitions that enhance user experience and provide visual feedback.</p>
+                <div class="card-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    4.5 hours · 10 lessons
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="quick-facts">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        Quick Facts
+                    </h4>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Learn the 12 principles of animation applied to UI/UX</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Create micro-interactions that communicate status</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Focus on performance optimization for smooth animations</span>
+                    </div>
+                </div>
+                <div class="wave-animation"></div>
+            </div>
+
+            <!-- Module 4 -->
+            <div class="module-card completed" data-progress="100">
+                <div class="pattern-dots"></div>
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <span class="difficulty advanced">Advanced</span>
+                </div>
+                <h3 class="card-title">User Testing Frameworks</h3>
+                <p class="card-description">Implement robust user testing methodologies to validate design decisions and improve usability.</p>
+                <div class="card-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    6 hours · 14 lessons
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="completion-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <div class="quick-facts">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        Quick Facts
+                    </h4>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Design comprehensive usability testing protocols</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Analyze and interpret qualitative user feedback</span>
+                    </div>
+                    <div class="fact-item">
+                        <span class="fact-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span>Learn remote testing methods for distributed teams</span>
+                    </div>
+                </div>
+                <div class="wave-animation"></div>
+            </div>
+        </div>
+        
+       
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const plansEndpoint = 'https://api.osmovo.com/api/plans';
+
+            // format storage (backend returns MB as string). If >=1024 MB show in GB
+            function formatStorage(storageStr) {
+                const mb = parseFloat(storageStr);
+                if (isNaN(mb)) return storageStr;
+                if (mb >= 1024) {
+                    const gb = mb / 1024;
+                    // remove trailing .00
+                    return `${gb.toFixed(2).replace(/\.00$/, '')} GB`;
+                }
+                // show as integer MB when < 1024
+                return `${Math.round(mb)} MB`;
+            }
+
+            // Helper to create a plan card DOM string
+            function renderPlanCard(plan, index) {
+                const priceLabel = plan.is_free ? 'Ücretsiz' : `${plan.price} ${plan.currency}`;
+                return `
+                    <div class="module-card" data-progress="0">
+                        <div class="price-badge">${priceLabel}</div>
+                        <div class="pattern-dots"></div>
+                        <div class="card-header">
+                            <div class="card-icon">${index === 1 ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>' : ''}</div>
+                            <span class="difficulty ${plan.is_free ? 'beginner' : 'intermediate'}">${plan.is_free ? 'Ücretsiz' : ''}</span>
+                        </div>
+                        <h3 class="card-title">${plan.name}</h3>
+                        <p class="card-description">${plan.description || ''}</p>
+                        <div class="card-meta">${formatStorage(plan.storage_limit)} • ${plan.question_limit} soru • ${plan.renewal_days} gün</div>
+                        <div class="progress-container">
+                            <div class="progress-bar"></div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="quick-facts" style="position:static;transform:none;padding:0;background:transparent;box-shadow:none;">
+                                <div class="fact-item"><span class="fact-icon">💾</span><span>Depolama: ${formatStorage(plan.storage_limit)}</span></div>
+                            </div>
+                            ${plan.is_free ? '' : '<a href="#" class="buy-btn">Satın Al</a>'}
+                        </div>
+                        <div class="wave-animation"></div>
+                    </div>
+                `;
+            }
+
+            // Fetch plans and render into .module-grid
+            fetch(plansEndpoint)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || !data.plans) throw new Error('No plans returned');
+                    const grid = document.querySelector('.module-grid');
+                    grid.innerHTML = '';
+                    data.plans.forEach((plan, i) => {
+                        const cardHtml = renderPlanCard(plan, i + 1);
+                        grid.insertAdjacentHTML('beforeend', cardHtml);
+                    });
+
+                    // After rendering, initialize interactions / progress bars
+                    initModuleInteractions();
+                })
+                .catch(err => {
+                    console.error('Failed to load plans:', err);
+                    // fallback: keep existing static cards (already in HTML)
+                    initModuleInteractions();
+                });
+
+            function initModuleInteractions() {
+                const moduleCards = document.querySelectorAll('.module-card');
+
+                moduleCards.forEach(card => {
+                    const progressBar = card.querySelector('.progress-bar');
+                    const progressValue = card.dataset.progress || 0;
+
+                    // Animate progress bar with a slight delay
+                    setTimeout(() => {
+                        if (progressBar) progressBar.style.width = `${progressValue}%`;
+                    }, 300);
+
+                    // Card interactions
+                    card.addEventListener('click', function() {
+                        if (!this.classList.contains('completed')) {
+                            document.querySelectorAll('.module-card.active').forEach(activeCard => {
+                                if (activeCard !== this) activeCard.classList.remove('active');
+                            });
+                            this.classList.add('active');
+                            if (this.dataset.progress === "0") {
+                                this.dataset.progress = "5";
+                                const pb = this.querySelector('.progress-bar');
+                                if (pb) pb.style.width = '5%';
+                            }
+                        }
+                    });
+                });
+
+                // Continue Learning button
+                const continueButton = document.querySelector('.start-learning');
+                if (continueButton) {
+                    continueButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const activeCard = document.querySelector('.module-card.active');
+                        if (activeCard) {
+                            let currentProgress = parseInt(activeCard.dataset.progress) || 0;
+                            currentProgress += 10;
+                            if (currentProgress > 100) currentProgress = 100;
+                            activeCard.dataset.progress = currentProgress;
+                            const progressBar = activeCard.querySelector('.progress-bar');
+                            if (progressBar) progressBar.style.width = `${currentProgress}%`;
+                            if (currentProgress === 100) {
+                                activeCard.classList.add('completed');
+                                activeCard.classList.remove('active');
+                                const moduleCards = document.querySelectorAll('.module-card');
+                                const nextModule = [...moduleCards].find(card => !card.classList.contains('completed') && !card.classList.contains('active'));
+                                if (nextModule) nextModule.classList.add('active');
+                            }
+                            this.style.transform = 'scale(0.95)';
+                            setTimeout(() => { this.style.transform = 'translateY(-2px)'; }, 150);
+                        }
+                    });
+                }
+
+                // Random subtle animations for the cards
+                function addRandomAnimation() {
+                    const moduleCards = document.querySelectorAll('.module-card');
+                    if (moduleCards.length === 0) return;
+                    const randomCard = moduleCards[Math.floor(Math.random() * moduleCards.length)];
+                    const dots = randomCard.querySelector('.pattern-dots');
+                    if (!dots) return;
+                    dots.style.transform = 'scale(1.1) rotate(5deg)';
+                    setTimeout(() => { dots.style.transform = ''; }, 1000);
+                    setTimeout(addRandomAnimation, 3000 + Math.random() * 2000);
+                }
+
+                setTimeout(addRandomAnimation, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

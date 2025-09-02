@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="tr">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kayıt Ol - PDF Sohbet Robotu</title>
+    <link rel="stylesheet" href="homePage.css">
+    <style>
+        /* Minimal form styles to match site */
+        .auth-container {
+            max-width: 480px;
+            margin: 64px auto;
+            padding: 28px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(2, 6, 23, 0.08)
+        }
+
+        .auth-title {
+            font-size: 22px;
+            margin: 0 0 12px;
+            color: #1a1d29
+        }
+
+        .form-group {
+            margin-bottom: 14px
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 6px
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e6e9ee;
+            border-radius: 8px;
+            font-size: 15px
+        }
+
+        .kvkk {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #4c63d2;
+            color: #fff;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            font-weight: 600
+        }
+
+        .muted {
+            font-size: 13px;
+            color: #6b7280
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+        <div class="auth-container">
+            <h1 class="auth-title">Kayıt Ol</h1>
+            <form action="/register" method="post">
+                <div class="form-group">
+                    <label for="first_name">Ad</label>
+                    <input id="first_name" name="first_name" type="text" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="last_name">Soyad</label>
+                    <input id="last_name" name="last_name" type="text" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-posta</label>
+                    <input id="email" name="email" type="email" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Parola</label>
+                    <input id="password" name="password" type="password" required />
+                </div>
+
+                <div class="form-group kvkk">
+                    <input id="kvkk" name="kvkk" type="checkbox" required />
+                    <div>
+                        <label for="kvkk" class="muted">KVKK ve Gizlilik Politikası'nı okudum, onaylıyorum.</label>
+                        <p class="muted" style="margin-top:6px;font-size:12px">Kişisel verileriniz, KVKK kapsamına uygun
+                            olarak işlenecek ve saklanacaktır. Daha fazla bilgi için <a href="#">Gizlilik
+                                Politikası</a>'nı inceleyin.</p>
+                    </div>
+                </div>
+
+                <div style="margin-top:18px;">
+                    <button class="btn-primary" type="submit">Kayıt Ol</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <style>
+        .form-feedback{margin-top:14px;padding:10px;border-radius:8px;font-size:14px}
+        .form-feedback.error{background:#fff1f0;border:1px solid #fecaca;color:#b91c1c}
+        .form-feedback.success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+    </style>
+
+    <script>
+        (function(){
+            const form = document.querySelector('form[action="/register"]');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            function showMessage(type, text){
+                let el = document.querySelector('.form-feedback');
+                if(!el){
+                    el = document.createElement('div');
+                    el.className = 'form-feedback';
+                    form.parentNode.insertBefore(el, form.nextSibling);
+                }
+                el.className = 'form-feedback ' + (type==='error' ? 'error' : 'success');
+                el.textContent = text;
+            }
+
+            form.addEventListener('submit', async function(e){
+                e.preventDefault();
+                const first_name = form.first_name.value.trim();
+                const last_name = form.last_name.value.trim();
+                const email = form.email.value.trim();
+                const password = form.password.value;
+                const kvkk = form.kvkk.checked;
+
+                if(!first_name || !last_name || !email || !password){
+                    showMessage('error', 'Lütfen tüm alanları doldurun.');
+                    return;
+                }
+                if(!kvkk){
+                    showMessage('error', 'KVKK onayı gereklidir.');
+                    return;
+                }
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Gönderiliyor...';
+
+                try{
+                    const res = await fetch('https://api.osmovo.com/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ first_name, last_name, email, password })
+                    });
+
+                    const data = await res.json().catch(()=> ({}));
+
+                    if(res.ok){
+                        showMessage('success', data.message || 'Kayıt başarılı. E-postanızı kontrol edin.');
+                        form.reset();
+
+                        // Redirect user after successful registration.
+                        // Prefer backend-provided redirect, then ?redirect= param, then fallback to index.html
+                        try {
+                            let target = data && data.redirect ? data.redirect : null;
+                            if (!target) {
+                                target = new URLSearchParams(location.search).get('redirect');
+                            }
+                            if (!target) target = 'index.html';
+
+                            setTimeout(() => {
+                                try {
+                                    window.location.href = new URL(target, location.href).href;
+                                } catch (err) {
+                                    window.location.href = target;
+                                }
+                            }, 1400);
+                        } catch (err) {
+                            // ignore redirect errors
+                        }
+                    } else {
+                        const err = data.error || data.message || 'Kayıt sırasında bir hata oluştu.';
+                        showMessage('error', err);
+                    }
+                }catch(err){
+                    showMessage('error', 'Sunucuya bağlanılamadı. Lütfen daha sonra tekrar deneyin.');
+                }finally{
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Kayıt Ol';
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
