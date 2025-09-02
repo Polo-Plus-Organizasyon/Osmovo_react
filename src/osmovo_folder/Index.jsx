@@ -6,6 +6,14 @@ import osmovo_logo from '../assets/images/osmovo_logo.svg'
 import Price from '../components/Price';
 import Skills from "../components/Skills";
 import Footer from "../components/Footer";
+import styled from 'styled-components';
+
+const PricingGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+`;
 
 export default function Index() {
     const navigate = useNavigate()
@@ -696,14 +704,7 @@ export default function Index() {
             max-width: none;
             padding: 0;
         }
-
-        .pricing-inner .module-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            align-items: stretch;
-        }
-
+        
         .pricing-inner .module-card {
             position: relative;
             background: rgba(255, 255, 255, 0.05);
@@ -801,7 +802,6 @@ export default function Index() {
             border: 1px solid white;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
             width: 100%;
         }
 
@@ -1094,10 +1094,6 @@ export default function Index() {
                 flex-direction: column;
                 align-items: center;
             }
-
-            .pricing-inner .module-grid {
-                grid-template-columns: 1fr;
-            }
         }
     `;
 
@@ -1259,7 +1255,7 @@ export default function Index() {
                 <div className="pricing-embed">
                     <div className="pricing-inner">
                         <div className="container">
-                            <div className="module-grid">
+                            <PricingGrid>
                                 {plansLoading ? (
                                     <div style={{gridColumn: '1 / -1', textAlign: 'center', color: 'rgba(255,255,255,0.8)'}}>
                                         Planlar yükleniyor...
@@ -1275,7 +1271,7 @@ export default function Index() {
                                         ))
                                     )
                                 )}
-                            </div>
+                            </PricingGrid>
                         </div>
                     </div>
                 </div>

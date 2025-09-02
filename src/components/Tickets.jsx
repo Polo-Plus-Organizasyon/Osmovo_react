@@ -39,6 +39,8 @@ const ModernTicketsPage = () => {
     priority: 'medium'
   });
 
+  const [newTicketFile, setNewTicketFile] = useState(null);
+
   // Response form
   const [newResponse, setNewResponse] = useState('');
 
@@ -126,18 +128,29 @@ const ModernTicketsPage = () => {
   const createTicket = async () => {
     try {
       const token = localStorage.getItem('authToken');
+      const formData = new FormData();
+      formData.append('title', newTicket.title);
+      formData.append('message', newTicket.message);
+      formData.append('ticket_category_id', newTicket.ticket_category_id);
+      formData.append('priority', newTicket.priority);
+
+      if (newTicketFile) {
+        formData.append('attachment', newTicketFile);
+      }
+
       const response = await fetch('https://api.osmovo.com/api/tickets', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          //'Content-Type': 'application/json' // Let browser set Content-Type for FormData
         },
-        body: JSON.stringify(newTicket)
+        body: formData
       });
       const data = await response.json();
       if (data.status) {
         setShowNewTicketModal(false);
         setNewTicket({ title: '', message: '', ticket_category_id: '', priority: 'medium' });
+        setNewTicketFile(null); // Clear the selected file
         fetchTickets();
       }
     } catch (error) {
@@ -252,18 +265,28 @@ const ModernTicketsPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
+            <button
+                onClick={() => navigate('/dashboard')}
+                className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors flex items-center space-x-2"
+              >
+                <ChevronRight className="w-4 h-4 transform rotate-180" />
+                <span>Geri</span>
+              </button>
               <h1 className="text-2xl font-bold text-gray-900">Destek Talepleri</h1>
               <div className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm">
                 {filteredTickets.length} talep
               </div>
             </div>
-            <button
-              onClick={() => setShowNewTicketModal(true)}
-              className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Yeni Talep</span>
-            </button>
+            <div className="flex items-center space-x-4">
+            
+              <button
+                onClick={() => setShowNewTicketModal(true)}
+                className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center space-x-2"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Yeni Talep</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -463,6 +486,25 @@ const ModernTicketsPage = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent resize-none"
                     placeholder="Sorununuzu detaylı bir şekilde açıklayın"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Dosya Yükle (Opsiyonel)
+                  </label>
+                  <input
+                    type="file"
+                    onChange={(e) => setNewTicketFile(e.target.files[0])}
+                    className="w-full text-sm text-gray-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-lg file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-black file:text-white
+                      hover:file:bg-gray-800"
+                  />
+                  {newTicketFile && (
+                    <p className="mt-2 text-sm text-gray-600">Seçilen dosya: {newTicketFile.name}</p>
+                  )}
                 </div>
               </div>
 

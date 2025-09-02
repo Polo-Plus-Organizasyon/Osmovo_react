@@ -292,6 +292,7 @@ const login = () => {
 
       const oauthUrl = 'https://api.osmovo.com/api/auth/google/redirect?redirect=' + encodeURIComponent(redirectTarget);
       window.location.href = oauthUrl;
+      
     } catch (err) {
       console.error('Google auth redirect error', err);
       setStatus({ message: 'Google ile giriş sırasında hata oluştu.', type: 'error' });

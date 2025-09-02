@@ -11,6 +11,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { BlockMath, InlineMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
+import Price from '../components/Price';
 
 const spin = keyframes`
   from { transform: rotate(0deg); }
@@ -429,13 +430,29 @@ const FeatureGrid = styled.div`
 
 const FeatureCard = styled.div`
   padding: 20px;
-  background: #f8faff; /* Very light blue background */
+  background: ${props => props.bgColor || '#f8faff'}; /* Allow overriding background */
   border-radius: 10px;
-  border: 1px solid #e2e8f0; /* Soft border */
+  border: 1px solid ${props => props.borderColor || '#e2e8f0'}; /* Soft border */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease-in-out;
   cursor: pointer;
+  position: relative; /* Needed for absolute positioning of pseudo-element */
+  isolation: isolate; /* To ensure z-index works as expected */
 
+  /* 1px gradient stroke that fades from 25% opacity to 0% using iconBg prop */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 10px; /* Match FeatureCard's border-radius */
+    padding: 1px; /* The width of the gradient border */
+    background: linear-gradient(to right, ${props => props.iconBg ? `${props.iconBg}40` : 'rgba(226, 232, 240, 0.25)'}, ${props => props.iconBg ? `${props.iconBg}00` : 'transparent'}); /* Gradient from 25% opacity to 0% */
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+    pointer-events: none;
+  }
 
   &:hover {
     transform: translateY(-8px) scale(1.02);
@@ -455,6 +472,7 @@ const FeatureIconWrapper = styled.div`
   margin-bottom: 16px;
   color: #ffffff;
   font-size: 24px;
+  
 `;
 
 const FeatureTitle = styled.h4`
@@ -790,7 +808,7 @@ const ViewAllButton = styled.button`
 const ProjectCardsWrapper = styled.div`
   overflow-y: auto;
   space-y: 12px; /* space-y-3 */
-  max-height: calc(100vh - 320px); /* Adjust based on header/upload/footer height */
+  max-height: calc(100vh - 450px); /* Adjust based on header/upload/footer height */
 `;
 
 const NoProjectMessage = styled.div`
@@ -1636,6 +1654,45 @@ const Dashboard = () => {
     isVisible: false,
   });
 
+  const placeholders = [
+    "Belgeleriniz hakkında sorular sorun",
+    "Yapay zeka destekli yanıtlar alın",
+    "Hızlıca özetler çıkarın",
+    "Önemli verileri ayıklayın",
+  ];
+  const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = useState(0);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(100);
+
+  useEffect(() => {
+    const handleTyping = () => {
+      const i = currentPlaceholderIndex % placeholders.length;
+      const fullText = placeholders[i];
+
+      setCurrentPlaceholder(
+        isDeleting
+          ? fullText.substring(0, currentPlaceholder.length - 1)
+          : fullText.substring(0, currentPlaceholder.length + 1)
+      );
+
+      setTypingSpeed(
+        isDeleting ? 50 : 100
+      );
+
+      if (!isDeleting && currentPlaceholder === fullText) {
+        setTimeout(() => setIsDeleting(true), 1000);
+      } else if (isDeleting && currentPlaceholder === '') {
+        setIsDeleting(false);
+        setCurrentPlaceholderIndex(prev => prev + 1);
+      }
+    };
+
+    const typewriterInterval = setInterval(handleTyping, typingSpeed);
+
+    return () => clearInterval(typewriterInterval);
+  }, [currentPlaceholder, isDeleting, typingSpeed, currentPlaceholderIndex]);
+
   const toggleProfileDropdown = () => {
     setIsProfileDropdownOpen(prev => !prev);
   };
@@ -1997,8 +2054,8 @@ const Dashboard = () => {
 
   // Clear current chat
   const clearChat = () => {
-    setMessages([]);
-    setCurrentConversation(null);
+  
+    navigate('/dashboard/upgrade');
   };
 
   // Create new conversation
@@ -2500,41 +2557,45 @@ const Dashboard = () => {
                 <WelcomeSubtitle>Belgeleriniz hakkında sorular sorun ve yapay zeka destekli yanıtlar alın.</WelcomeSubtitle>
 
                 <FeatureGrid>
-                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb">
+                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#f97316">
                     <FeatureIconWrapper iconBg="#f97316">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m0-3-3-3m0 0-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
+</svg>
+
                     </FeatureIconWrapper>
                     <FeatureTitle>PDF Yükle</FeatureTitle>
                     <FeatureDescription>Belgelerinizi hızlıca yükleyin</FeatureDescription>
                   </FeatureCard>
 
-                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb">
+                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#3b82f6">
                     <FeatureIconWrapper iconBg="#3b82f6">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+</svg>
+
                     </FeatureIconWrapper>
                     <FeatureTitle>Sorular Sor</FeatureTitle>
                     <FeatureDescription>PDF içeriği hakkında sohbet et</FeatureDescription>
                   </FeatureCard>
 
-                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb">
+                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#10b981">
                     <FeatureIconWrapper iconBg="#10b981">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75" />
+</svg>
+
                     </FeatureIconWrapper>
                     <FeatureTitle>Özet Al</FeatureTitle>
                     <FeatureDescription>PDF'den hızlı özet çıkarın</FeatureDescription>
                   </FeatureCard>
 
-                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb">
+                  <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#8b5cf6">
                     <FeatureIconWrapper iconBg="#8b5cf6">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                      </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+</svg>
+
                     </FeatureIconWrapper>
                     <FeatureTitle>Bilgi Çıkar</FeatureTitle>
                     <FeatureDescription>Önemli verileri ayıklayın</FeatureDescription>
@@ -2604,10 +2665,9 @@ const Dashboard = () => {
                   type="text"
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  placeholder="Soru sormaya başlayın"
-                  style={{ flex: '1', border: 'none', background: 'transparent', padding: '12px 0', borderRadius: '0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+                  placeholder={currentPlaceholder} // Use the dynamic placeholder here
+                  style={{ flex: '1', border: 'none', background: 'transparent', padding: '12px 0', borderRadius: '0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginLeft: '10px' }}
                 />
-                <ChatCharacterCount style={{ padding: '0 12px', flexShrink: '0' }}>{inputMessage.length}/3,000</ChatCharacterCount>
               </ChatInputGroup>
 
               <div className="flex-shrink-0">

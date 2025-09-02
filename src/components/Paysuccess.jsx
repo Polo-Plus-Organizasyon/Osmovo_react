@@ -118,7 +118,7 @@ function Paysuccess() {
         </SuccessIcon>
         <Title>Ödeme Başarılı!</Title>
         <Message>
-          Siparişiniz başarıyla alınmıştır. En kısa sürede size ulaşacaktır.
+          Siparişiniz başarıyla alınmıştır.
           Bizi tercih ettiğiniz için teşekkür ederiz.
         </Message>
 

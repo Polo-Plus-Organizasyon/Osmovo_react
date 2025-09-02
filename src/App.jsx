@@ -17,6 +17,7 @@ import Ticket from './components/Ticket'
 import Tickets from './components/Tickets'
 import Paysuccess from './components/Paysuccess'
 import PayWrong from './components/PayWrong'
+import Upgrade from './components/Upgrade'
 
 function App() {
 
@@ -40,6 +41,7 @@ function App() {
         <Route path='dashboard/tickets' element={<ProtectedRoute><Tickets/></ProtectedRoute>} />
         <Route path='/paysuccess' element={<ProtectedRoute><Paysuccess/></ProtectedRoute>} />
         <Route path='/paywrong' element={<ProtectedRoute><PayWrong/></ProtectedRoute>} />
+        <Route path='/dashboard/upgrade' element={<ProtectedRoute><Upgrade/></ProtectedRoute>} />
 
 
 
