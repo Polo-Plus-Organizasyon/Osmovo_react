@@ -1031,10 +1031,10 @@ const ContractText = ({ plan, name, address, phone, email }) => (
                         <p style={{ fontWeight: '500' }}>1.2 Alıcıya Ait Bilgiler</p>
                         <div style={{ marginLeft: '16px', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                             <div>
-                                <p>Adı Soyadı: {name || '[Form alanından alınacak]'}</p>
-                                <p>Adresi: {address || '[Form alanından alınacak]'}</p>
-                                <p>Telefon: {phone || '[Form alanından alınacak]'}</p>
-                                <p>E-posta: {email || '[Form alanından alınacak]'}</p>
+                                <p>Adı Soyadı: {name || ''}</p>
+                                <p>Adresi: {address || ''}</p>
+                                <p>Telefon: {phone || ''}</p>
+                                <p>E-posta: {email || ''}</p>
                                 <p>Tarih: {new Date().toLocaleDateString()}</p>
                             </div>
                         </div>
