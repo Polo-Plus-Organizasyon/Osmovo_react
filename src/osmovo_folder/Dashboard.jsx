@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import osmovo_logo from '../assets/images/osmovo_logo.svg'
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import osmovo_amblem from '../assets/images/osmovo_amblem.svg'
 import { Route, Routes } from 'react-router-dom';
 import Tickets from '../components/Tickets';
@@ -24,6 +24,12 @@ const DashboardContainer = styled.div`
   background-color: #f9fafb; /* bg-gray-50 */
   font-family: sans-serif; /* font-sans */
   overflow:hidden;
+
+  @media (max-width: 768px) {
+    flex-direction: column; /* Stack elements vertically on small screens */
+    height: auto; /* Adjust height for content */
+    overflow-y: auto; /* Allow scrolling for the entire dashboard */
+  }
 `;
 
 const ConversationSidebar = styled.div`
@@ -39,20 +45,30 @@ const ConversationSidebar = styled.div`
   @media (max-width: 768px) {
     position: fixed;
     height: 100vh;
+    width: 100%; /* Full width on mobile */
+    transform: translateX(${props => props.isOpen ? '0' : '-100%'}); /* Slide in/out effect */
+    box-shadow: ${props => props.isOpen ? '3px 0 15px rgba(0,0,0,0.2)' : 'none'}; /* Stronger shadow when open */
     z-index: 50;
   }
 `;
 
 const SidebarHeader = styled.div`
+
   height: 64px; /* h-16 */
-  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 16px; /* px-4 */
-  padding-right: 16px; /* px-4 */
-  border-bottom: 1px solid #f3f4f6; /* Lighter border */
-  background-color: #ffffff; /* Ensure white background */
+  justify-content: ${props => props.isCollapsed ? 'center' : 'space-between'};
+  padding-left: 24px; /* px-6 */
+  padding-right: 24px; /* px-6 */
+  border-bottom: 1px solid #e5e7eb; /* border-b border-gray-200 */
+  background-color: #ffffff; /* bg-white */
+
+  
+  ${props => props.isMobile && css`
+    padding-left: 16px; /* Adjust padding for mobile */
+    padding-right: 16px; /* Adjust padding for mobile */
+    height: 56px; /* Slightly smaller header on mobile */
+  `}
 `;
 
 const LogoWrapper = styled.div`
@@ -78,6 +94,10 @@ const ToggleSidebarButton = styled.button`
     margin-left: auto;
     margin-right: auto;
   `}
+  @media (max-width: 768px) {
+    /* Adjust button positioning for mobile sidebar */
+    ${props => props.isCollapsed ? '' : 'margin-left: 0;'}
+  }
 `;
 
 const SidebarContent = styled.div`
@@ -214,6 +234,10 @@ const UserProfileContent = styled.div`
   display: flex;
   align-items: center;
   gap: 12px; /* space-x-3 */
+  ${props => props.isCollapsed && `
+    justify-content: center;
+    width: 100%;
+  `}
 `;
 
 const UserAvatar = styled.div`
@@ -258,6 +282,10 @@ const UserProfileDropdownContainer = styled.div`
     background-color: #f3f4f6; /* Light gray background on hover */
   }
   transition: all 0.2s ease-in-out;
+  ${props => props.isCollapsed && `
+    justify-content: center;
+    padding: 10px;
+  `}
 `;
 
 const DropdownMenu = styled.div`
@@ -318,6 +346,11 @@ const MainChatArea = styled.div`
   flex-direction: column;
   min-height: 0;
   
+  @media (max-width: 768px) {
+    flex: 1; /* Allow MainChatArea to take available space */
+    width: 100%; /* Full width on mobile */
+    min-height: calc(100vh - 128px); /* Adjust based on header/input height */
+  }
 `;
 
 const ChatHeader = styled.div`
@@ -328,14 +361,66 @@ const ChatHeader = styled.div`
   padding-left: 24px; /* px-6 */
   padding-right: 24px; /* px-6 */
   border-bottom: 1px solid #e5e7eb; /* border-b border-gray-200 */
-  background-color: #ffffff; /* bg-white */
+  backgroposition: relative;
   
+  @media (max-width: 768px) {
+     position: fixed;/* Establish positioning context for absolutely positioned children */
+     width:100%;
+    justify-content: center; /* Center content on mobile */
+    padding-left: 10px; /* Adjust padding for mobile */
+    padding-right: 10px; /* Adjust padding for mobile */
+  }
+`;
+
+const MobileSidebarToggleButtonLeft = styled.button`
+  display: none; /* Hidden by default */
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    color: #9ca3af;
+    &:hover { color: #4b5563; background-color: #f3f4f6; }
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    position: absolute; /* Re-introduce absolute positioning */
+    left: 10px; /* Position on the left */
+    z-index: 60; /* Ensure it's above other elements */
+  }
+`;
+
+const MobileSidebarToggleButtonRight = styled.button`
+  display: none; /* Hidden by default */
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    color: #9ca3af;
+    &:hover { color: #4b5563; background-color: #f3f4f6; }
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    position: absolute; /* Re-introduce absolute positioning */
+    right: 10px; /* Position on the right */
+    z-index: 60; /* Ensure it's above other elements */
+  }
 `;
 
 const ChatTitle = styled.h2`
   font-size: 18px; /* text-lg */
   font-weight: 600; /* font-semibold */
   color: #111827; /* text-gray-900 */
+  @media (max-width: 768px) {
+    font-size: 16px; /* Smaller title on mobile */
+  }
+`;
+
+const MobileChatHeaderStyles = styled.div` // New styled component for mobile ChatHeader adjustments
+  @media (max-width: 768px) {
+    padding-left: 16px;
+    padding-right: 16px;
+    height: 56px;
+  }
 `;
 
 const UpgradeButton = styled.button`
@@ -352,6 +437,11 @@ const UpgradeButton = styled.button`
   &:hover { background-color: #1f2937; } /* hover:bg-gray-900 */
   &:focus { outline: none; ring: 2px solid rgba(0,0,0,0.2); } /* focus:outline-none focus:ring-2 focus:ring-black/20 */
   transition: all 0.15s ease-in-out; /* transition-all */
+  @media (max-width: 768px) {
+    padding: 4px 10px; /* Adjust padding for mobile */
+    font-size: 13px; /* Smaller font size */
+    gap: 6px; /* Adjust gap for icon and text */
+  }
 `;
 
 const ChatMessagesContainer = styled.div`
@@ -373,6 +463,10 @@ const WelcomeMessageContainer = styled.div`
   border-radius: 16px;
   backdrop-filter: blur(5px); /* Subtle blur effect */
   color: #2c3e50; /* Darker text for contrast */
+
+  @media (max-width: 768px) {
+    padding: 16px; /* Adjust padding for mobile */
+  }
 `;
 
 const WelcomeContent = styled.div`
@@ -385,6 +479,10 @@ const WelcomeContent = styled.div`
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px; /* Adjust padding for mobile */
   }
 `;
 
@@ -411,6 +509,10 @@ const WelcomeTitle = styled.h3`
   color: #1a202c; /* Very dark text */
   margin-bottom: 12px;
   letter-spacing: -0.5px;
+
+  @media (max-width: 768px) {
+    font-size: 24px; /* Smaller title on mobile */
+  }
 `;
 
 const WelcomeSubtitle = styled.p`
@@ -418,6 +520,11 @@ const WelcomeSubtitle = styled.p`
   font-size: 18px; /* Larger subtitle */
   line-height: 1.6;
   margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    font-size: 15px; /* Smaller subtitle on mobile */
+    margin-bottom: 24px; /* Adjust margin */
+  }
 `;
 
 const FeatureGrid = styled.div`
@@ -426,6 +533,11 @@ const FeatureGrid = styled.div`
   gap: 20px; /* Increased gap */
   text-align: center;
   margin-top: 24px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 16px; /* Adjust gap for mobile */
+  }
 `;
 
 const FeatureCard = styled.div`
@@ -459,6 +571,10 @@ const FeatureCard = styled.div`
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     border-color: #a7b7ff; /* Blue border on hover */
   }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
 `;
 
 const FeatureIconWrapper = styled.div`
@@ -473,6 +589,12 @@ const FeatureIconWrapper = styled.div`
   color: #ffffff;
   font-size: 24px;
   
+  @media (max-width: 768px) {
+    width: 40px; /* Smaller icon wrapper on mobile */
+    height: 40px; /* Smaller icon wrapper on mobile */
+    font-size: 20px; /* Smaller icon size */
+    margin-bottom: 12px; /* Adjust margin */
+  }
 `;
 
 const FeatureTitle = styled.h4`
@@ -480,12 +602,20 @@ const FeatureTitle = styled.h4`
   font-size: 18px;
   color: #2d3748; /* Darker gray */
   margin-bottom: 8px;
+
+  @media (max-width: 768px) {
+    font-size: 16px; /* Smaller title on mobile */
+  }
 `;
 
 const FeatureDescription = styled.p`
   font-size: 15px;
   color: #718096; /* Medium gray */
   line-height: 1.5;
+
+  @media (max-width: 768px) {
+    font-size: 14px; /* Smaller description on mobile */
+  }
 `;
 
 const ChatMessagesWrapper = styled.div`
@@ -493,13 +623,17 @@ const ChatMessagesWrapper = styled.div`
   max-width: 50%; /* max-w-3xl */
   margin-left: auto; /* mx-auto */
   margin-right: auto; /* mx-auto */
+
+  @media (max-width: 768px) {
+    max-width: 100%; /* Full width on mobile */
+    padding: 0 16px; /* Add some horizontal padding */
+  }
 `;
 
 const MessageBubble = styled.div`
   display: flex;
   justify-content: ${props => props.sender === 'user' ? 'flex-end' : 'flex-start'};
-
-`;
+  `;
 
 const MessageContent = styled.div`
   max-width: 1024px; /* max-w-lg */
@@ -515,6 +649,10 @@ const MessageContent = styled.div`
   align-items: ${props => props.sender === 'user' ? 'flex-end' : 'flex-start'};
       margin-top: 50px; /* mx-auto */
 
+  @media (max-width: 768px) {
+    max-width: 100%; /* Full width on mobile */
+    
+  }
 `;
 
 const MessageText = styled.div`
@@ -589,18 +727,30 @@ const MessageTimestamp = styled.div`
   font-size: 12px; /* text-xs */
   margin-top: 8px; /* mt-2 */
   opacity: 0.7;
+  
 `;
 
 const ChatInputSection = styled.div`
   border-top: 1px solid #e5e7eb; /* border-t border-gray-200 */
   background-color: #ffffff; /* bg-white */
   padding: 24px; /* py-6 px-6 */
+
+  @media (max-width: 768px) {
+        position: fixed; /* scroll olunca üstte yapışsın */
+        bottom:0;
+        width:100%;
+        margin-top:200px;
+  }
 `;
 
 const ChatInputForm = styled.form`
   max-width: 896px; /* max-w-4xl */
   margin-left: auto; /* mx-auto */
   margin-right: auto; /* mx-auto */
+
+  @media (max-width: 768px) {
+    max-width: 100%; /* Full width on mobile */
+  }
 `;
 
 const ChatInputFlex = styled.div`
@@ -608,6 +758,7 @@ const ChatInputFlex = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 16px; /* space-x-4 */
+  
 `;
 
 const ChatInputGroup = styled.div`
@@ -619,6 +770,7 @@ const ChatInputGroup = styled.div`
   border-radius: 12px; /* Rounded corners for the whole group */
   background-color: #ffffff; /* White background */
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* subtle shadow */
+  
   &:focus-within {
     outline: none;
     border-color: #007bff; /* Blue border on focus */
@@ -647,6 +799,10 @@ const MessageInput = styled.input`
   background-color: transparent; /* Transparent background */
   color: #111827; /* Dark text */
   &::placeholder { color: #888; } /* Gray placeholder */
+  @media (max-width: 768px) {
+    font-size: 14px; /* Adjust font size for mobile */
+    padding: 10px 12px; /* Adjust padding for touch targets */
+  }
 `;
 
 const SendMessageButton = styled.button`
@@ -662,6 +818,11 @@ const SendMessageButton = styled.button`
   &:hover { background-color: #1f2937; } /* hover:bg-gray-800 */
   transition: background-color 0.15s ease-in-out; /* transition-colors */
   &:disabled { opacity: 0.5; cursor: not-allowed; }
+  @media (max-width: 768px) {
+    width: 40px; /* Smaller button for mobile */
+    height: 40px; /* Smaller button for mobile */
+    border-radius: 10px; /* Slightly less rounded */
+  }
 `;
 
 const ChatInputBottomRow = styled.div`
@@ -687,6 +848,11 @@ const ChatActionButton = styled.button`
   border-right: 1px solid black ;
   font-size: 14px;
   &:hover { color: #4b5563; } /* hover:text-gray-700 */
+
+  @media (max-width: 768px) {
+    font-size: 13px; /* Smaller font size on mobile */
+    padding: 6px 10px; /* Adjust padding for touch targets */
+  }
 `;
 
 const ChatCharacterCount = styled.div`
@@ -707,6 +873,9 @@ const PdfSidebar = styled.div`
     position: fixed;
     right: 0;
     height: 100vh;
+    width: ${props => props.isOpen ? '384px' : '64px'}; /* w-96 vs w-16 */
+    transform: translateX(${props => props.isOpen ? '0' : '100%'}); /* Slide in/out effect */
+    box-shadow: ${props => props.isOpen ? '-3px 0 15px rgba(0,0,0,0.2)' : 'none'}; /* Stronger shadow when open */
     z-index: 50;
   }
 `;
@@ -784,6 +953,12 @@ const ProjectListContainer = styled.div`
   padding-right: 16px; /* px-4 */
   padding-bottom: 16px; /* pb-4 */
   min-height: 0;
+
+  @media (max-width: 768px) {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 12px;
+  }
 `;
 
 const ProjectsHeader = styled.div`
@@ -797,18 +972,30 @@ const ProjectsTitle = styled.h3`
   font-size: 14px; /* text-sm */
   font-weight: 500; /* font-medium */
   color: #374151; /* text-gray-700 */
+  @media (max-width: 768px) {
+    font-size: 13px; /* Smaller title on mobile */
+  }
 `;
 
 const ViewAllButton = styled.button`
   font-size: 12px; /* text-xs */
   color: #6b7280; /* text-gray-500 */
   &:hover { color: #374151; } /* hover:text-gray-700 */
+
+  @media (max-width: 768px) {
+    font-size: 11px; /* Smaller font size on mobile */
+  }
 `;
 
 const ProjectCardsWrapper = styled.div`
   overflow-y: auto;
   space-y: 12px; /* space-y-3 */
   max-height: calc(100vh - 450px); /* Adjust based on header/upload/footer height */
+
+  @media (max-width: 768px) {
+    max-height: 450px; /* Limit height on mobile for scrollability */
+    padding-bottom: 8px; /* Adjust padding */
+  }
 `;
 
 const NoProjectMessage = styled.div`
@@ -849,6 +1036,9 @@ const ProjectCard = styled.div`
   align-items: flex-start;
   gap: 12px; /* space-x-3 */
   border: ${props => props.isSelected ? '2px solid #6366f1; background-color: #eef2ff; ring: 1px solid #c7d2fe;' : '1px solid #f3f4f6;'};
+  @media (max-width: 768px) {
+    padding: 10px; /* Adjust padding for mobile */
+  }
 `;
 
 const ProjectIconWrapper = styled.div`
@@ -881,17 +1071,30 @@ const ProjectName = styled.h4`
   white-space: nowrap; /* truncate */
   overflow: hidden;
   text-overflow: ellipsis;
+
+  @media (max-width: 768px) {
+    font-size: 13px; /* Smaller font size on mobile */
+  }
 `;
 
 const ProjectSize = styled.div`
   font-size: 12px; /* text-xs */
   color: #9ca3af; /* text-gray-400 */
+
+  @media (max-width: 768px) {
+    font-size: 11px; /* Smaller font size on mobile */
+  }
 `;
 
 const ProjectDate = styled.div`
   font-size: 12px; /* text-xs */
   color: #6b7280; /* text-gray-500 */
   margin-bottom: 8px; /* mb-2 */
+
+  @media (max-width: 768px) {
+    font-size: 11px; /* Smaller font size on mobile */
+    margin-bottom: 6px; /* Adjust margin for mobile */
+  }
 `;
 
 const ProjectActions = styled.div`
@@ -1534,6 +1737,11 @@ const UsageRights = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    padding: 12px; /* Adjust padding for mobile */
+    font-size: 13px; /* Adjust font size for mobile */
+  }
 `;
 
 const UsageRightsTitle = styled.h4`
@@ -1541,12 +1749,20 @@ const UsageRightsTitle = styled.h4`
   font-weight: 600;
   color: #111827;
   margin-bottom: 4px;
+
+  @media (max-width: 768px) {
+    font-size: 14px; /* Smaller title on mobile */
+  }
 `;
 
 const UsageItem = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media (max-width: 768px) {
+    font-size: 13px; /* Adjust font size for mobile */
+  }
 `;
 
 const UsageLabel = styled.span`
@@ -1654,6 +1870,8 @@ const Dashboard = () => {
     isVisible: false,
   });
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // New: State to track mobile view
+
   const placeholders = [
     "Belgeleriniz hakkında sorular sorun",
     "Yapay zeka destekli yanıtlar alın",
@@ -1692,6 +1910,14 @@ const Dashboard = () => {
 
     return () => clearInterval(typewriterInterval);
   }, [currentPlaceholder, isDeleting, typingSpeed, currentPlaceholderIndex]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Run only once on mount and unmount
 
   const toggleProfileDropdown = () => {
     setIsProfileDropdownOpen(prev => !prev);
@@ -2054,7 +2280,7 @@ const Dashboard = () => {
 
   // Clear current chat
   const clearChat = () => {
-  
+
     navigate('/dashboard/upgrade');
   };
 
@@ -2203,12 +2429,14 @@ const Dashboard = () => {
       {/* Left Sidebar - Conversations */}
       <ConversationSidebar isOpen={isConversationSidebarOpen}>
         {/* Header */}
-        <SidebarHeader>
+        <SidebarHeader isMobile={isMobile} isCollapsed={!isConversationSidebarOpen}>
           {isConversationSidebarOpen ? (
             <>
-              <LogoWrapper>
-                <LogoImage src={osmovo_logo} alt="osmovo_logo" />
-              </LogoWrapper>
+              {isConversationSidebarOpen && !isMobile && (
+                <LogoWrapper>
+                  <LogoImage src={osmovo_logo} alt="osmovo_logo" />
+                </LogoWrapper>
+              )}
               <ToggleSidebarButton
                 onClick={() => setIsConversationSidebarOpen(false)}
                 isCollapsed={!isConversationSidebarOpen}
@@ -2282,20 +2510,35 @@ const Dashboard = () => {
         )}
 
         {/* Settings */}
-        <UserProfileContainer ref={dropdownRef}>
-          <UserProfileDropdownContainer onClick={toggleProfileDropdown}>
-            <UserProfileContent>
-              <UserAvatar>
-                <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        {isConversationSidebarOpen && (
+          <UserProfileContainer ref={dropdownRef}>
+            <UserProfileDropdownContainer onClick={toggleProfileDropdown}>
+              <UserProfileContent isCollapsed={!isConversationSidebarOpen}>
+                <UserAvatar>
+                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </UserAvatar>
+                {isConversationSidebarOpen && (
+                  <UserInfo>
+                    <UserName>{user?.user?.first_name + " " + user?.user?.last_name || 'Kullanıcı'}</UserName>
+                  </UserInfo>
+                )}
+              </UserProfileContent>
+              {isConversationSidebarOpen && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className={`w-4 h-4 text-gray-400 transform transition-transform ${isProfileDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                 </svg>
-              </UserAvatar>
-              <UserInfo>
-                <UserName>{user?.user?.first_name + " " + user?.user?.last_name || 'Kullanıcı'}</UserName>
-                {/* <LogoutButton onClick={logout}>Çıkış Yap</LogoutButton> */}
-              </UserInfo>
-            </UserProfileContent>
-            <DropdownMenu isOpen={isProfileDropdownOpen}>
+              )}
+            </UserProfileDropdownContainer>
+            <DropdownMenu isOpen={isProfileDropdownOpen && isConversationSidebarOpen}>
               <SettingsButton><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -2310,8 +2553,8 @@ const Dashboard = () => {
               <DropdownDivider />
               <DropdownItem onClick={logout}>Çıkış Yap</DropdownItem>
             </DropdownMenu>
-          </UserProfileDropdownContainer>
-        </UserProfileContainer>
+          </UserProfileContainer>
+        )}
       </ConversationSidebar>
 
       {/* Support Sidebar */}
@@ -2526,24 +2769,54 @@ const Dashboard = () => {
       {/* Main Chat Area */}
       <MainChatArea>
         {/* Chat Header */}
-        <ChatHeader>
+        <ChatHeader isMobile={isMobile}>
           <div className="flex items-center space-x-3">
+            {isMobile && !isConversationSidebarOpen && (
+              <MobileSidebarToggleButtonLeft
+                onClick={() => setIsConversationSidebarOpen(true)}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </MobileSidebarToggleButtonLeft>
+            )}
             <ChatTitle>
               {currentConversation ? currentConversation.title : 'Yeni Sohbet'}
             </ChatTitle>
+            {isMobile && !isPdfSidebarOpen && (
+              <MobileSidebarToggleButtonRight
+                onClick={() => setIsPdfSidebarOpen(true)}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+              </MobileSidebarToggleButtonRight>
+            )}
           </div>
-          
+
           <div className="flex items-center space-x-2">
-            <UpgradeButton
-              onClick={clearChat}
-              title="Yükselt"
-              aria-label="Yükselt"
-            >
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Yükselt</span>
-            </UpgradeButton>
+            {!isMobile && (
+              <UpgradeButton
+                onClick={clearChat}
+                title="Yükselt"
+                aria-label="Yükselt"
+              >
+                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span>Yükselt</span>
+              </UpgradeButton>
+            )}
+            {!isMobile && !isPdfSidebarOpen && (
+              <ToggleSidebarButton
+                onClick={() => setIsPdfSidebarOpen(true)}
+                isCollapsed={true}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+                </svg>
+              </ToggleSidebarButton>
+            )}
           </div>
         </ChatHeader>
 
@@ -2552,16 +2825,16 @@ const Dashboard = () => {
           {messages.length === 0 ? (
             <WelcomeMessageContainer>
               <WelcomeContent>
-                
+
                 <WelcomeTitle>Osmovo'ya Hoş Geldiniz</WelcomeTitle>
                 <WelcomeSubtitle>Belgeleriniz hakkında sorular sorun ve yapay zeka destekli yanıtlar alın.</WelcomeSubtitle>
 
                 <FeatureGrid>
                   <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#f97316">
                     <FeatureIconWrapper iconBg="#f97316">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m0-3-3-3m0 0-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-</svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m0-3-3-3m0 0-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
+                      </svg>
 
                     </FeatureIconWrapper>
                     <FeatureTitle>PDF Yükle</FeatureTitle>
@@ -2570,9 +2843,9 @@ const Dashboard = () => {
 
                   <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#3b82f6">
                     <FeatureIconWrapper iconBg="#3b82f6">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
-</svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+                      </svg>
 
                     </FeatureIconWrapper>
                     <FeatureTitle>Sorular Sor</FeatureTitle>
@@ -2581,9 +2854,9 @@ const Dashboard = () => {
 
                   <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#10b981">
                     <FeatureIconWrapper iconBg="#10b981">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75" />
-</svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0 1 18 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3 1.5 1.5 3-3.75" />
+                      </svg>
 
                     </FeatureIconWrapper>
                     <FeatureTitle>Özet Al</FeatureTitle>
@@ -2592,9 +2865,9 @@ const Dashboard = () => {
 
                   <FeatureCard bgColor="#f9fafb" borderColor="#e5e7eb" iconBg="#8b5cf6">
                     <FeatureIconWrapper iconBg="#8b5cf6">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-</svg>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                      </svg>
 
                     </FeatureIconWrapper>
                     <FeatureTitle>Bilgi Çıkar</FeatureTitle>
@@ -2690,9 +2963,8 @@ const Dashboard = () => {
 
       {/* Right Sidebar - Documents */}
       <PdfSidebar isOpen={isPdfSidebarOpen}>
-        {/* Header */}
-        <PdfSidebarHeader isOpen={isPdfSidebarOpen}>
-          {isPdfSidebarOpen ? (
+        {isPdfSidebarOpen && (
+          <PdfSidebarHeader isOpen={isPdfSidebarOpen}>
             <ToggleSidebarButton
               onClick={() => setIsPdfSidebarOpen(false)}
             >
@@ -2700,16 +2972,8 @@ const Dashboard = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
               </svg>
             </ToggleSidebarButton>
-          ) : (
-            <ToggleSidebarButton
-              onClick={() => setIsPdfSidebarOpen(true)}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-              </svg>
-            </ToggleSidebarButton>
-          )}
-        </PdfSidebarHeader>
+          </PdfSidebarHeader>
+        )}
 
         {isPdfSidebarOpen && (
           <div className="flex-1 flex flex-col">

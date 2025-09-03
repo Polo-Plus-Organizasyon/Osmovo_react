@@ -229,16 +229,6 @@ const login = () => {
         
         console.log('Redirect target:', target); // Debug için
   
-        // if location.state.from exists (rare after full OAuth roundtrip) try to use it
-        try {
-          if (!redirectParam && location && location.state && location.state.from) {
-            const from = location.state.from;
-            target = typeof from === 'string' ? from : (from.pathname || '/') + (from.search || '');
-          }
-        } catch (e) { 
-          console.error('Location state error:', e);
-        }
-  
         // Clean URL after processing
         try {
           const cleanUrl = window.location.origin + window.location.pathname;
@@ -285,10 +275,6 @@ const login = () => {
       const params = new URLSearchParams(location.search || '');
       const qsRedirect = params.get('redirect');
       let redirectTarget = qsRedirect || '/dashboard';
-      if (location && location.state && location.state.from) {
-        const from = location.state.from;
-        redirectTarget = typeof from === 'string' ? from : (from.pathname || '/') + (from.search || '');
-      }
 
       const oauthUrl = 'https://api.osmovo.com/api/auth/google/redirect?redirect=' + encodeURIComponent(redirectTarget);
       window.location.href = oauthUrl;
@@ -345,7 +331,7 @@ const login = () => {
           type: "success",
         });
 
-        window.location.href="/dashboard";
+        // window.location.href="/dashboard"; // Removed hardcoded redirect
         
         let target = null;
 
@@ -358,22 +344,21 @@ const login = () => {
 
         if (!target && location?.state?.from) {
           const from = location.state.from;
-          target =
-            typeof from === "string"
-              ? from
-              : (from.pathname || "/") + (from.search || "");
+          target = typeof from === "string"
+            ? from
+            : (from.pathname || "/") + (from.search || "");
         }
 
         if (!target) target = "/dashboard";
 
-        // normalize route
-        if (target === "/dashboard") {
-          target = "/dashboard";
-        }
+        // normalize route - no need for this, navigate handles it
+        // if (target === "/dashboard") {
+        //   target = "/dashboard";
+        // }
 
-        if (target === "/checkout") {
-          target = "/checkout";
-        }
+        // if (target === "/checkout") {
+        //   target = "/checkout";
+        // }
 
         try {
           navigate(target, { replace: true });

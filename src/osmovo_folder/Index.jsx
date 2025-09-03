@@ -13,6 +13,53 @@ const PricingGrid = styled.div`
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
     margin-top: 40px;
+
+    ${props => props.singlePlan && `
+        grid-template-columns: 1fr;
+        justify-items: center;
+
+        > div {
+            max-width: 400px; /* Adjust this value as needed */
+            width: 100%;
+        }
+    `}
+`;
+
+const PlanTypeToggle = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+`;
+
+const ToggleButton = styled.button`
+  padding: 12px 24px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+
+  &:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+
+  &.active {
+    background-color: #1a202c;
+    color: #ffffff;
+    border-color: #1a202c;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover:not(.active) {
+    background-color: #edf2f7;
+    color: #1a202c;
+  }
 `;
 
 export default function Index() {
@@ -1100,6 +1147,7 @@ export default function Index() {
     // plans state and loader
     const [plans, setPlans] = useState([]);
     const [plansLoading, setPlansLoading] = useState(false);
+    const [activePlanType, setActivePlanType] = useState('monthly'); // 'monthly' or 'yearly'
 
     useEffect(() => {
         const fetchPlans = async () => {
@@ -1120,6 +1168,19 @@ export default function Index() {
         };
         fetchPlans();
     }, []);
+
+    const handlePlanTypeChange = (type) => {
+        setActivePlanType(type);
+    };
+
+    const filteredPlans = plans.filter(plan => {
+        if (activePlanType === 'monthly') {
+            return plan.renewal_days !== 365; // Monthly plans are not 365 days
+        } else if (activePlanType === 'yearly') {
+            return plan.renewal_days === 365; // Yearly plans are 365 days
+        }
+        return true;
+    });
 
     const checkout = async(id)=>{
         const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken') || (/token=/.test(document.cookie) ? 'cookie' : null);
@@ -1164,7 +1225,7 @@ export default function Index() {
                                 <h1>PDF'lerinizi <span className="highlight">Yapay Zeka</span> ile Anlayın</h1>
                                 <p>Belgelerinizi yükleyin, sorularınızı sorun ve anında akıllı yanıtlar alın. Hukuki analiz, özet çıkarma ve belge arama artık çok daha kolay.</p>
                                 <div className="cta-container">
-                                    <button className="cta-button">Ücretsiz Başlayın</button>
+                                    <button onClick={()=>navigate("/login")} className="cta-button">Ücretsiz Başlayın</button>
                                 </div>
                             </div>
                             <div className="hero-visual slide-up">
@@ -1253,20 +1314,36 @@ export default function Index() {
 
             <section id="fiyatlandirma" className="pricing fade-in">
                 <div className="pricing-embed">
+                    
                     <div className="pricing-inner">
+                        <PlanTypeToggle>
+                            <ToggleButton 
+                                className={activePlanType === 'monthly' ? 'active' : ''}
+                                onClick={() => handlePlanTypeChange('monthly')}
+                            >
+                                Aylık Planlar
+                            </ToggleButton>
+                            <ToggleButton 
+                                className={activePlanType === 'yearly' ? 'active' : ''}
+                                onClick={() => handlePlanTypeChange('yearly')}
+                            >
+                                Yıllık Planlar
+                            </ToggleButton>
+                        </PlanTypeToggle>
+
                         <div className="container">
-                            <PricingGrid>
+                            <PricingGrid singlePlan={filteredPlans.length === 1}>
                                 {plansLoading ? (
                                     <div style={{gridColumn: '1 / -1', textAlign: 'center', color: 'rgba(255,255,255,0.8)'}}>
                                         Planlar yükleniyor...
                                     </div>
                                 ) : (
-                                    plans.length === 0 ? (
+                                    filteredPlans.length === 0 ? (
                                         <div style={{gridColumn: '1 / -1', textAlign: 'center', color: 'rgba(255,255,255,0.8)'}}>
                                             Hiç plan bulunamadı.
                                         </div>
                                     ) : (
-                                        plans.map((plan) => (
+                                        filteredPlans.map((plan) => (
                                             <Price key={plan.id} plan={plan} onSelect={checkout} />
                                         ))
                                     )

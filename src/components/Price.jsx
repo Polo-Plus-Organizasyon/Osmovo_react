@@ -491,6 +491,10 @@ const DiamondIcon = styled.span`
 //   z-index: 3;
 // `;
 
+const Main = styled.div`
+,
+`
+
 const Price = ({ plan, onSelect }) => {
   const handleSelect = (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -504,6 +508,7 @@ const Price = ({ plan, onSelect }) => {
   };
 
   return (
+    <Main>
     <PricingCard>
       <CardIcon>
         <svg viewBox="0 0 24 24">
@@ -577,6 +582,7 @@ const Price = ({ plan, onSelect }) => {
         ))}
       </FeaturesList>
     </PricingCard>
+    </Main>
   );
 };
 

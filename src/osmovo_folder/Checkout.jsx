@@ -564,14 +564,14 @@ export default function Checkout() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div>
                     <p>
-                        İş bu ön bilgilendirme formunun ve ardından dijital ortamda imzalanacak mesafeli satış sözleşmesinin konusunu oluşturan ürün/hizmetin SATICI'sı POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olabileceği gibi SATICI www.osmovo.com.tr internet sitesini ve elektronik altyapısını kullanan başkaca 3. Kişiler olabilir. SATICI ve SATICI'ya ait iletişim bilgileri bu ön bilgilendirme formunda ve www.osmovo.com.tr internet sitesinde iş bu ön bilgilendirme formuna konu ürün veya hizmetin detaylarında belirtilir. SATICI'nın POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olmadığı ürün satışı ve teslimine ilişkin sözleşmelerde sözleşme konusu ürün veya hizmetin satışında POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ herhangi bir şekilde sözleşmenin tarafı olmayıp TÜKETİCİ VE SATICI'nın yükümlülüklerini yerine getirmeleri ile ilgili herhangi bir sorumluluk ve taahhüt yükümlülüğü altında değildir.
+                        İş bu ön bilgilendirme formunun ve ardından dijital ortamda imzalanacak mesafeli satış sözleşmesinin konusunu oluşturan ürün/hizmetin SATICI'sı POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olabileceği gibi SATICI www.osmovo.com internet sitesini ve elektronik altyapısını kullanan başkaca 3. Kişiler olabilir. SATICI ve SATICI'ya ait iletişim bilgileri bu ön bilgilendirme formunda ve www.osmovo.com internet sitesinde iş bu ön bilgilendirme formuna konu ürün veya hizmetin detaylarında belirtilir. SATICI'nın POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olmadığı ürün satışı ve teslimine ilişkin sözleşmelerde sözleşme konusu ürün veya hizmetin satışında POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ herhangi bir şekilde sözleşmenin tarafı olmayıp TÜKETİCİ VE SATICI'nın yükümlülüklerini yerine getirmeleri ile ilgili herhangi bir sorumluluk ve taahhüt yükümlülüğü altında değildir.
                     </p>
                 </div>
                 <div>
                     <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>2. SÖZLEŞMENİN KONUSU VE ÜRÜN</h2>
                     <div style={{ marginLeft: '16px' }}>
                         <p>
-                            İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com.tr uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
+                            İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
                         </p>
                     </div>
                 </div>
@@ -1022,7 +1022,7 @@ const ContractText = () => (
                             <p>Unvanı: POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</p>
                             <p>Adres: KINIKLI MAH. HÜSEYİN YILMAZ CAD. PAMUKKALE ÜNİVERSİTESİ NO: 67 İÇ KAPI NO: 17-18 PAMUKKALE/ DENİZLİ</p>
                             <p>Telefon: 0 (258) 215 51 05</p>
-                            <p>E-posta: info@osmovo.com.tr</p>
+                            <p>E-posta: info@osmovo.com</p>
                             <p>Mersis Numarası: 07322178480700001</p>
                             <p>KEP Adresi: poloplus@hs03.kep.tr</p>
                         </div>
@@ -1044,7 +1044,7 @@ const ContractText = () => (
                 <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>2. SÖZLEŞMENİN KONUSU VE ÜRÜN</h2>
                 <div style={{ marginLeft: '16px' }}>
                     <p>
-                        İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com.tr uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
+                        İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
                     </p>
                 </div>
             </div>
@@ -1104,7 +1104,7 @@ const ContractText = () => (
             <div>
                 <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>Cayma Bildirimi</h2>
                 <div style={{ marginLeft: '16px' }}>
-                    <p>E-Posta: info@osmovo.com.tr</p>
+                    <p>E-Posta: info@osmovo.com</p>
                     <p>Posta Adresi: KINIKLI MAH. HÜSEYİN YILMAZ CAD. PAMUKKALE ÜNİVERSİTESİ NO: 67 İÇ KAPI NO: 17-18 PAMUKKALE/ DENİZLİ</p>
                 </div>
             </div>

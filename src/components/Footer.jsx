@@ -217,7 +217,7 @@ const Footer = () => {
           </FooterLogoWrapper>
           <FooterHeading>Hakkımızda</FooterHeading>
           <AboutUsText>
-            PoloPlus Osmovo, kişiselleştirilmiş öğrenme deneyimi sunan modern bir eğitim platformudur. Başarıya giden yolda yanınızdayız.
+            PoloPlus Osmovo, kişiselleştirilmiş öğrenme deneyimi sunan modern bir pdf uygulamasıdır. Başarıya giden yolda yanınızdayız.
           </AboutUsText>
           <FooterHeading>İletişim</FooterHeading>
           <ContactItem>

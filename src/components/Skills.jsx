@@ -164,9 +164,45 @@ const AccentLine = styled.div`
 const Features = () => {
   const featuresData = [
     {
+      title: "Bilimsel Proje Yazma",
+      description: "Araştırma hipotezi oluşturma, metodoloji önerileri ve deney tasarımı konusunda rehberlik sağlar. Kaynakça ve referans formatlarında yardımcı olur.",
+      number: "01",
+      svgIcon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 2v6"/>
+          <path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"/>
+          <path d="M9 12h6"/>
+        </svg>
+      )
+    },
+    {
+      title: "Makale Yazma",
+      description: "Akademik ve popüler makale formatlarında içerik üretir, giriş-yorum-sonuç yapısı oluşturur ve dilbilgisi/akıcı ifade düzeltmeleri yapar.",
+      number: "02",
+      svgIcon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M4 6h16"/>
+          <path d="M4 12h16"/>
+          <path d="M4 18h10"/>
+          <path d="M6 4v16"/>
+        </svg>
+      )
+    },
+    {
+      title: "Sağlık ve Tahlil Sonuçları",
+      description: "Laboratuvar tahlil sonuçlarını yorumlar, normal/aralık dışı değerleri açıklar ve olası anlamları hakkında bilgilendirici özetler sunar (tıbbi tanı yerine bilgilendirme amaçlıdır).",
+      number: "03",
+      svgIcon: (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M12 2a7 7 0 0 0-7 7v7a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V9a7 7 0 0 0-7-7z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      )
+    },
+    {
       title: "Akıllı Soru-Cevap",
       description: "PDF'inizdeki herhangi bir konuda soru sorun, detaylı ve doğru yanıtlar alın. Doğal dil işleme ile konuşur gibi etkileşim kurun.",
-      number: "01",
+      number: "04",
       svgIcon: (
        <svg class="w-16 h-16 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.529 9.988a2.502 2.502 0 1 1 5 .191A2.441 2.441 0 0 1 12 12.582V14m-.01 3.008H12M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -177,7 +213,7 @@ const Features = () => {
     {
       title: "Hukuki Analiz",
       description: "Sözleşmeler, yasal belgeler ve mevzuat metinlerini analiz edin. Risk noktalarını ve önemli maddeleri otomatik tespit edin.",
-      number: "02",
+      number: "05",
       svgIcon: (
     <svg class="w-[52px] h-[52px] text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.5 21h13M12 21V7m0 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm2-1.8c3.073.661 2.467 2.8 5 2.8M5 8c3.359 0 2.192-2.115 5.012-2.793M7 9.556V7.75m0 1.806-1.95 4.393a.773.773 0 0 0 .37.962.785.785 0 0 0 .362.089h2.436a.785.785 0 0 0 .643-.335.776.776 0 0 0 .09-.716L7 9.556Zm10 0V7.313m0 2.243-1.95 4.393a.773.773 0 0 0 .37.962.786.786 0 0 0 .362.089h2.436a.785.785 0 0 0 .643-.335.775.775 0 0 0 .09-.716L17 9.556Z"/>
@@ -189,7 +225,7 @@ const Features = () => {
     {
       title: "Özet ve Rapor",
       description: "Uzun belgelerin özetlerini çıkarın, anahtar noktaları vurgulayın ve özelleştirilmiş raporlar oluşturun.",
-      number: "03",
+      number: "06",
       svgIcon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
@@ -202,7 +238,7 @@ const Features = () => {
     {
       title: "Gelişmiş Arama",
       description: "Belgenizde semantik arama yapın. Kelimelerin anlamını anlayan AI ile ilgili tüm bilgileri bulun.",
-      number: "04",
+      number: "07",
       svgIcon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="11" cy="11" r="8"/>
@@ -213,7 +249,7 @@ const Features = () => {
     {
       title: "Güvenli İşleme",
       description: "KVKK uyumlu, güvenli ve gizlilik odaklı çözüm. Verileriniz güvende tutulur ve korunur.",
-      number: "05",
+      number: "08",
       svgIcon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -224,7 +260,7 @@ const Features = () => {
     {
       title: "Hızlı Yanıt",
       description: "Saniyeler içinde işlem tamamlama. Büyük belgeler bile anında analiz edilir ve sorularınız yanıtlanır.",
-      number: "06",
+      number: "09",
       svgIcon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
