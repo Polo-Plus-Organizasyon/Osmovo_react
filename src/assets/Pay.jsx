@@ -906,7 +906,6 @@ Eğitim içeriklerine erişim sağılmış olsa bile, kullanıcılar satın alma
                                     Satın Al butonuna tıklayarak{" "}
                                     <span
                                         className="text-blue-600 hover:underline cursor-pointer"
-                                        onClick={() => setShowTermsModal(true)}
                                     >
                                         Ön Bilgilendirme Koşulları
                                     </span>{" "}

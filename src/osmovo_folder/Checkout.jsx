@@ -868,7 +868,7 @@ export default function Checkout() {
                     </Modal>
 
                     <Modal isOpen={showContractModal} onClose={() => setShowContractModal(false)}>
-                        <ContractText />
+                        <ContractText plan={plan} name={name} address={address} phone={phone} email={email} />
                     </Modal>
 
                     <ContractFooter 
@@ -1006,7 +1006,7 @@ export default function Checkout() {
     );
 }
 
-const ContractText = () => (
+const ContractText = ({ plan, name, address, phone, email }) => (
     <div style={{ fontSize: '14px', color: '#3a3a3b', whiteSpace: 'pre-line', maxHeight: '80vh', overflowY: 'auto', padding: '24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
             <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#3a3a3b', margin: 0 }}>MESAFELİ SATIŞ SÖZLEŞMESİ</h1>
@@ -1030,11 +1030,13 @@ const ContractText = () => (
                     <div>
                         <p style={{ fontWeight: '500' }}>1.2 Alıcıya Ait Bilgiler</p>
                         <div style={{ marginLeft: '16px', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <p>Adı Soyadı: {name || '[Form alanından alınacak]'}</p>
-                            <p>Adresi: {address || '[Form alanından alınacak]'}</p>
-                            <p>Telefon: {phone || '[Form alanından alınacak]'}</p>
-                            <p>E-posta: {email || '[Form alanından alınacak]'}</p>
-                            <p>Tarih: {new Date().toLocaleDateString()}</p>
+                            <div>
+                                <p>Adı Soyadı: {name || '[Form alanından alınacak]'}</p>
+                                <p>Adresi: {address || '[Form alanından alınacak]'}</p>
+                                <p>Telefon: {phone || '[Form alanından alınacak]'}</p>
+                                <p>E-posta: {email || '[Form alanından alınacak]'}</p>
+                                <p>Tarih: {new Date().toLocaleDateString()}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
