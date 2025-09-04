@@ -1835,6 +1835,38 @@ const NotificationCloseButton = styled.button`
   }
 `;
 
+const NoQuestionsBanner = styled.div`
+  background: linear-gradient(90deg, #fffbeb, #fffaf0);
+  border: 1px solid #fef3c7;
+  color: #92400e;
+  padding: 12px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  position: fixed;
+  
+  z-index: 10;
+  backdrop-filter: none;
+`;
+
+const NoQuestionsText = styled.div`
+  font-size: 14px;
+  color: #92400e;
+`;
+
+const NoQuestionsAction = styled.button`
+  background: #92400e;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+`;
+
 const Dashboard = () => {
   // State management
   const [conversations, setConversations] = useState([]);
@@ -2332,6 +2364,16 @@ const Dashboard = () => {
     }
   }
 
+  // Determine if user has exhausted their question limit
+  const outOfQuestions = (() => {
+    const used = Number(user?.question_used || 0);
+    const limit = user?.question_limit;
+    if (limit === null || limit === undefined) return false;
+    const lim = Number(limit);
+    if (!isFinite(lim) || lim <= 0) return false;
+    return used >= lim;
+  })();
+
   const clearConversation = async (id) => {
     if (!id) return;
 
@@ -2822,6 +2864,16 @@ const Dashboard = () => {
 
         {/* Chat Messages */}
         <ChatMessagesContainer ref={chatContainerRef}>
+          {outOfQuestions && (
+            <div style={{maxWidth: 896, margin: '0 auto 16px'}}>
+              <NoQuestionsBanner>
+                <NoQuestionsText>
+                  Soru hakkınız doldu. Yeni soru hakkı için lütfen planınızı yükseltin veya bekleyin.
+                </NoQuestionsText>
+                <NoQuestionsAction onClick={() => navigate('/dashboard/upgrade')}>Yükselt</NoQuestionsAction>
+              </NoQuestionsBanner>
+            </div>
+          )}
           {messages.length === 0 ? (
             <WelcomeMessageContainer>
               <WelcomeContent>
@@ -2940,6 +2992,7 @@ const Dashboard = () => {
                   onChange={(e) => setInputMessage(e.target.value)}
                   placeholder={currentPlaceholder} // Use the dynamic placeholder here
                   style={{ flex: '1', border: 'none', background: 'transparent', padding: '12px 0', borderRadius: '0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginLeft: '10px' }}
+                  disabled={outOfQuestions}
                 />
               </ChatInputGroup>
 
@@ -2947,7 +3000,7 @@ const Dashboard = () => {
                 <SendMessageButton
                   type="submit"
                   aria-label="Send message"
-                  disabled={!inputMessage.trim()}
+                  disabled={outOfQuestions || !inputMessage.trim()}
                   style={{ borderRadius: '12px' }}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

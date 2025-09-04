@@ -44,6 +44,7 @@ export default function Upgrade() {
 
   const [plans, setPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
+  const [billingCycle, setBillingCycle] = useState('monthly'); // 'monthly' or 'yearly'
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -75,23 +76,76 @@ export default function Upgrade() {
     navigate(target);
   };
 
+  // Determine filtered plans based on renewal_days when available.
+  // Fallback: if no plan includes renewal_days, show all plans for both tabs.
+  const hasRenewalInfo = plans.some(p => p && (p.renewal_days !== undefined && p.renewal_days !== null));
+
+  const filteredPlans = (() => {
+    if (!hasRenewalInfo) return plans;
+
+    return plans.filter(p => {
+      if (!p) return false;
+      const rd = Number(p.renewal_days);
+      if (!isFinite(rd)) return false;
+      if (billingCycle === 'monthly') {
+        // treat <= 31 days as monthly
+        return rd <= 31;
+      }
+      // treat >= 360 days as yearly
+      return rd >= 360;
+    });
+  })();
+
   return (
     <MainContainer>
       <ContentWrapper>
         <Title>Planınızı Yükseltin</Title>
-     
+
+        <div style={{display: 'flex', justifyContent: 'center', marginBottom: 20}}>
+          <div style={{display: 'inline-flex', background: '#fff', borderRadius: 8, boxShadow: '0 1px 2px rgba(0,0,0,0.05)'}}>
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              style={{
+                padding: '10px 18px',
+                border: 'none',
+                background: billingCycle === 'monthly' ? '#0f1724' : 'transparent',
+                color: billingCycle === 'monthly' ? '#fff' : '#0f1724',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontWeight: 700
+              }}
+            >
+              Aylık Planlar
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              style={{
+                padding: '10px 18px',
+                border: 'none',
+                background: billingCycle === 'yearly' ? '#0f1724' : 'transparent',
+                color: billingCycle === 'yearly' ? '#fff' : '#0f1724',
+                borderRadius: 8,
+                cursor: 'pointer',
+                fontWeight: 700
+              }}
+            >
+              Yıllık Planlar
+            </button>
+          </div>
+        </div>
+
         <PricingGrid>
           {plansLoading ? (
             <div style={{gridColumn: '1 / -1', textAlign: 'center', color: '#111827'}}>
               Planlar yükleniyor...
             </div>
           ) : (
-            plans.length === 0 ? (
+            filteredPlans.length === 0 ? (
               <div style={{gridColumn: '1 / -1', textAlign: 'center', color: '#111827'}}>
                 Hiç plan bulunamadı.
               </div>
             ) : (
-              plans.map((plan) => (
+              filteredPlans.map((plan) => (
                 <Price key={plan.id} plan={plan} onSelect={checkout} />
               ))
             )

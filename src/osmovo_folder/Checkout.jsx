@@ -254,16 +254,16 @@ const Input = ({ ...props }) => (
     transition: 'all 0.2s ease',
     backgroundColor: 'white',
     outline: 'none'
-  }} 
-  onFocus={(e) => {
-    e.target.style.borderColor = '#3a3a3b';
-    e.target.style.boxShadow = '0 0 0 3px rgba(58, 58, 59, 0.1)';
   }}
-  onBlur={(e) => {
-    e.target.style.borderColor = '#dee2e6';
-    e.target.style.boxShadow = 'none';
-  }}
-  {...props} />
+    onFocus={(e) => {
+      e.target.style.borderColor = '#3a3a3b';
+      e.target.style.boxShadow = '0 0 0 3px rgba(58, 58, 59, 0.1)';
+    }}
+    onBlur={(e) => {
+      e.target.style.borderColor = '#dee2e6';
+      e.target.style.boxShadow = 'none';
+    }}
+    {...props} />
 );
 
 const FieldRow = ({ children }) => (
@@ -294,19 +294,19 @@ const PrimaryButton = ({ children, ...props }) => (
     transition: 'all 0.2s ease',
     marginTop: '24px'
   }}
-  onMouseEnter={(e) => {
-    if (!e.target.disabled) {
-      e.target.style.backgroundColor = '#2d2d2e';
-      e.target.style.transform = 'translateY(-1px)';
-    }
-  }}
-  onMouseLeave={(e) => {
-    if (!e.target.disabled) {
-      e.target.style.backgroundColor = '#3a3a3b';
-      e.target.style.transform = 'translateY(0)';
-    }
-  }}
-  {...props}>
+    onMouseEnter={(e) => {
+      if (!e.target.disabled) {
+        e.target.style.backgroundColor = '#2d2d2e';
+        e.target.style.transform = 'translateY(-1px)';
+      }
+    }}
+    onMouseLeave={(e) => {
+      if (!e.target.disabled) {
+        e.target.style.backgroundColor = '#3a3a3b';
+        e.target.style.transform = 'translateY(0)';
+      }
+    }}
+    {...props}>
     {children}
   </button>
 );
@@ -388,7 +388,7 @@ const TotalPrice = ({ children }) => (
 
 const PaymentStatus = ({ visible, type, msg }) => {
   if (!visible) return null;
-  
+
   const getStatusStyle = () => {
     const baseStyle = {
       marginTop: '16px',
@@ -461,7 +461,7 @@ const SecurityBadge = ({ children }) => (
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
-  
+
   return (
     <div style={{
       position: 'fixed',
@@ -483,7 +483,7 @@ const Modal = ({ isOpen, onClose, children }) => {
         maxHeight: '90vh',
         overflowY: 'auto'
       }}>
-        <button 
+        <button
           onClick={onClose}
           style={{
             position: 'absolute',
@@ -511,8 +511,8 @@ const ContractFooter = ({ onTermsClick, onContractClick }) => (
     textAlign: 'center',
     borderTop: '1px solid #e9ecef'
   }}>
-    <button 
-      type="button" 
+    <button
+      type="button"
       onClick={onTermsClick}
       style={{
         background: 'none',
@@ -526,8 +526,8 @@ const ContractFooter = ({ onTermsClick, onContractClick }) => (
     >
       Ön Bilgilendirme Koşulları
     </button>
-    <button 
-      type="button" 
+    <button
+      type="button"
       onClick={onContractClick}
       style={{
         background: 'none',
@@ -544,342 +544,426 @@ const ContractFooter = ({ onTermsClick, onContractClick }) => (
 );
 
 export default function Checkout() {
-    const [plan, setPlan] = useState(null);
-    const [quantity, setQuantity] = useState(1);
-    const [paymentStatus, setPaymentStatus] = useState({ visible: false, msg: "", type: "" });
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [address, setAddress] = useState("");
-    const [phone, setPhone] = useState("");
-    const payBtnRef = useRef(null);
-    const [showTermsModal, setShowTermsModal] = useState(false);
-    const [showContractModal, setShowContractModal] = useState(false);
+  const [plan, setPlan] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [paymentStatus, setPaymentStatus] = useState({ visible: false, msg: "", type: "" });
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const payBtnRef = useRef(null);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showContractModal, setShowContractModal] = useState(false);
+  const [iframeSrc, setIframeSrc] = useState(null);
+  const [showIframe, setShowIframe] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-    // Terms and Contract components (copied/adapted)
-    const TermsText = () => (
-        <div style={{ fontSize: '14px', color: '#3a3a3b', maxHeight: '80vh', overflowY: 'auto', padding: '24px', fontFamily: 'inherit' }}>
-            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#3a3a3b', margin: 0 }}>ÖN BİLGİLENDİRME FORMU</h1>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div>
-                    <p>
-                        İş bu ön bilgilendirme formunun ve ardından dijital ortamda imzalanacak mesafeli satış sözleşmesinin konusunu oluşturan ürün/hizmetin SATICI'sı POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olabileceği gibi SATICI www.osmovo.com internet sitesini ve elektronik altyapısını kullanan başkaca 3. Kişiler olabilir. SATICI ve SATICI'ya ait iletişim bilgileri bu ön bilgilendirme formunda ve www.osmovo.com internet sitesinde iş bu ön bilgilendirme formuna konu ürün veya hizmetin detaylarında belirtilir. SATICI'nın POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olmadığı ürün satışı ve teslimine ilişkin sözleşmelerde sözleşme konusu ürün veya hizmetin satışında POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ herhangi bir şekilde sözleşmenin tarafı olmayıp TÜKETİCİ VE SATICI'nın yükümlülüklerini yerine getirmeleri ile ilgili herhangi bir sorumluluk ve taahhüt yükümlülüğü altında değildir.
-                    </p>
-                </div>
-                <div>
-                    <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>2. SÖZLEŞMENİN KONUSU VE ÜRÜN</h2>
-                    <div style={{ marginLeft: '16px' }}>
-                        <p>
-                            İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
-                        </p>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>3. SÖZLEŞMEYE KONU HİZMET BİLGİLERİ VE SATIŞ BEDELİ</h2>
-                    <div style={{ marginLeft: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        <div>
-                            <p style={{ fontWeight: '500' }}>3.1. Sözleşme konusu hizmetin nitelikleri, türü, satış bedeli ve ödeme koşulları ilgili faturada belirtilmektedir.</p>
-                            <table style={{ width: '100%', marginTop: '16px', marginBottom: '16px', borderCollapse: 'collapse', border: '1px solid #dee2e6' }}>
-                                <thead>
-                                    <tr style={{ backgroundColor: '#f8f9fa' }}>
-                                        <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'left', fontWeight: '600' }}>
-                                            Ürün Adı
-                                        </th>
-                                        <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center', fontWeight: '600', width: '96px' }}>
-                                            Adet
-                                        </th>
-                                        <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right', fontWeight: '600', width: '192px' }}>
-                                            Satış Tutarı (KDV dahil)
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style={{ border: '1px solid #dee2e6', padding: '16px' }}>
-                                            {plan?.name || '-'}
-                                        </td>
-                                        <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center' }}>
-                                            1
-                                        </td>
-                                        <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
-                                            {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
-                                        </td>
-                                    </tr>
-                                    <tr style={{ backgroundColor: '#f8f9fa', fontWeight: '600' }}>
-                                        <td colSpan={2} style={{ border: '1px solid #dee2e6', padding: '16px' }}>
-                                            Net Tutar
-                                        </td>
-                                        <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
-                                            {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  // Terms and Contract components (copied/adapted)
+  const TermsText = () => (
+    <div style={{ fontSize: '14px', color: '#3a3a3b', maxHeight: '80vh', overflowY: 'auto', padding: '24px', fontFamily: 'inherit' }}>
+      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#3a3a3b', margin: 0 }}>ÖN BİLGİLENDİRME FORMU</h1>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div>
+          <p>
+            İş bu ön bilgilendirme formunun ve ardından dijital ortamda imzalanacak mesafeli satış sözleşmesinin konusunu oluşturan ürün/hizmetin SATICI'sı POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olabileceği gibi SATICI www.osmovo.com internet sitesini ve elektronik altyapısını kullanan başkaca 3. Kişiler olabilir. SATICI ve SATICI'ya ait iletişim bilgileri bu ön bilgilendirme formunda ve www.osmovo.com internet sitesinde iş bu ön bilgilendirme formuna konu ürün veya hizmetin detaylarında belirtilir. SATICI'nın POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olmadığı ürün satışı ve teslimine ilişkin sözleşmelerde sözleşme konusu ürün veya hizmetin satışında POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ herhangi bir şekilde sözleşmenin tarafı olmayıp TÜKETİCİ VE SATICI'nın yükümlülüklerini yerine getirmeleri ile ilgili herhangi bir sorumluluk ve taahhüt yükümlülüğü altında değildir.
+          </p>
         </div>
-    );
+        <div>
+          <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>2. SÖZLEŞMENİN KONUSU VE ÜRÜN</h2>
+          <div style={{ marginLeft: '16px' }}>
+            <p>
+              İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
+            </p>
+          </div>
+        </div>
 
-    function getPlanIdFromPath() {
-        const path = window.location.pathname || "";
-        const m = path.match(/\/checkout\/(\d+)/);
-        if (m) return m[1];
-        const qp = new URLSearchParams(window.location.search).get("plan");
-        return qp;
+        <div>
+          <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>3. SÖZLEŞMEYE KONU HİZMET BİLGİLERİ VE SATIŞ BEDELİ</h2>
+          <div style={{ marginLeft: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div>
+              <p style={{ fontWeight: '500' }}>3.1. Sözleşme konusu hizmetin nitelikleri, türü, satış bedeli ve ödeme koşulları ilgili faturada belirtilmektedir.</p>
+              <table style={{ width: '100%', marginTop: '16px', marginBottom: '16px', borderCollapse: 'collapse', border: '1px solid #dee2e6' }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f8f9fa' }}>
+                    <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'left', fontWeight: '600' }}>
+                      Ürün Adı
+                    </th>
+                    <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center', fontWeight: '600', width: '96px' }}>
+                      Adet
+                    </th>
+                    <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right', fontWeight: '600', width: '192px' }}>
+                      Satış Tutarı (KDV dahil)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style={{ border: '1px solid #dee2e6', padding: '16px' }}>
+                      {plan?.name || '-'}
+                    </td>
+                    <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center' }}>
+                      1
+                    </td>
+                    <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
+                      {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
+                    </td>
+                  </tr>
+                  <tr style={{ backgroundColor: '#f8f9fa', fontWeight: '600' }}>
+                    <td colSpan={2} style={{ border: '1px solid #dee2e6', padding: '16px' }}>
+                      Net Tutar
+                    </td>
+                    <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
+                      {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  function getPlanIdFromPath() {
+    const path = window.location.pathname || "";
+    const m = path.match(/\/checkout\/(\d+)/);
+    if (m) return m[1];
+    const qp = new URLSearchParams(window.location.search).get("plan");
+    return qp;
+  }
+
+  function formatStorage(s) {
+    const n = parseFloat(s);
+    if (isNaN(n)) return s;
+    if (n >= 1024) {
+      const g = n / 1024;
+      return `${g.toFixed(2).replace(/\.00$/, "")} GB`;
+    }
+    return `${Math.round(n)} MB`;
+  }
+
+  useEffect(() => {
+    async function loadPlan(planId) {
+      try {
+        const res = await fetch("https://api.osmovo.com/api/plans");
+        const data = await res.json();
+        const found = (data.plans || []).find((p) => String(p.id) === String(planId)) || (data.plans || [])[0];
+        if (!found) return;
+        setPlan(found);
+      } catch (err) {
+        console.error(err);
+      }
     }
 
-    function formatStorage(s) {
-        const n = parseFloat(s);
-        if (isNaN(n)) return s;
-        if (n >= 1024) {
-            const g = n / 1024;
-            return `${g.toFixed(2).replace(/\.00$/, "")} GB`;
+    const planId = getPlanIdFromPath() || new URLSearchParams(window.location.search).get('plan');
+    loadPlan(planId);
+  }, []);
+
+  useEffect(() => {
+    if (!plan) return;
+
+    // Update plan details in the UI
+    const nameEl = document.getElementById('plan-name');
+    const descEl = document.getElementById('plan-desc');
+    const storageEl = document.getElementById('plan-storage');
+    const questionsEl = document.getElementById('plan-questions');
+    const renewalEl = document.getElementById('plan-renewal');
+    const priceEl = document.getElementById('plan-price');
+    const summaryPlan = document.getElementById('summary-plan');
+    const summaryPrice = document.getElementById('summary-price');
+    const totalEl = document.getElementById('total-price');
+
+    if (nameEl) nameEl.textContent = plan.name;
+    if (descEl) descEl.textContent = plan.description || '';
+    if (storageEl) storageEl.textContent = formatStorage(plan.storage_limit);
+    if (questionsEl) questionsEl.textContent = plan.question_limit;
+    if (renewalEl) renewalEl.textContent = plan.renewal_days;
+    if (priceEl) priceEl.textContent = plan.is_free ? 'Ücretsiz' : (plan.price + ' ' + (plan.currency || 'TRY'));
+    if (summaryPrice) summaryPrice.textContent = plan.is_free ? 'Ücretsiz' : (plan.price + ' ' + (plan.currency || 'TRY'));
+    if (summaryPlan) summaryPlan.textContent = plan.name;
+    if (totalEl) {
+      const unit = plan.is_free ? 0 : (Number(plan.price) || 0);
+      const total = unit * (Number(quantity) || 1);
+      totalEl.textContent = plan.is_free ? 'Ücretsiz' : (total + ' ' + (plan.currency || 'TRY'));
+    }
+  }, [plan, quantity]);
+
+  function isLoggedIn() {
+    return Boolean(localStorage.getItem('authToken') || sessionStorage.getItem('authToken')) || /(^|; )\s*token=/.test(document.cookie);
+  }
+
+  useEffect(() => {
+    if (!showIframe || !iframeSrc) return;
+
+    // Add iframe resizer script if not present
+    const scriptId = 'paytr-iframe-resizer';
+    if (!document.getElementById(scriptId)) {
+      const s = document.createElement('script');
+      s.id = scriptId;
+      s.src = 'https://www.paytr.com/js/iframeResizer.min.js';
+      s.async = true;
+      s.onload = () => {
+        try {
+          if (window.iFrameResize) {
+            window.iFrameResize({}, '#paytriframe');
+          }
+        } catch (e) {
+          // ignore
         }
-        return `${Math.round(n)} MB`;
+      };
+      document.body.appendChild(s);
+    } else {
+      // script already loaded, try to call resizer
+      try {
+        if (window.iFrameResize) window.iFrameResize({}, '#paytriframe');
+      } catch (e) {
+        // ignore
+      }
     }
 
-    useEffect(() => {
-        async function loadPlan(planId) {
-            try {
-                const res = await fetch("https://api.osmovo.com/api/plans");
-                const data = await res.json();
-                const found = (data.plans || []).find((p) => String(p.id) === String(planId)) || (data.plans || [])[0];
-                if (!found) return;
-                setPlan(found);
-            } catch (err) {
-                console.error(err);
-            }
-        }
+    // scroll to iframe
+    setTimeout(() => {
+      const el = document.getElementById('paytriframe');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 200);
+  }, [showIframe, iframeSrc, showPaymentModal]);
 
-        const planId = getPlanIdFromPath() || new URLSearchParams(window.location.search).get('plan');
-        loadPlan(planId);
-    }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    useEffect(() => {
-        if (!plan) return;
-        
-        // Update plan details in the UI
-        const nameEl = document.getElementById('plan-name');
-        const descEl = document.getElementById('plan-desc');
-        const storageEl = document.getElementById('plan-storage');
-        const questionsEl = document.getElementById('plan-questions');
-        const renewalEl = document.getElementById('plan-renewal');
-        const priceEl = document.getElementById('plan-price');
-        const summaryPlan = document.getElementById('summary-plan');
-        const summaryPrice = document.getElementById('summary-price');
-        const totalEl = document.getElementById('total-price');
+  function showPaymentStatus(msg, type) {
+    setPaymentStatus({ visible: true, msg, type });
+  }
 
-        if (nameEl) nameEl.textContent = plan.name;
-        if (descEl) descEl.textContent = plan.description || '';
-        if (storageEl) storageEl.textContent = formatStorage(plan.storage_limit);
-        if (questionsEl) questionsEl.textContent = plan.question_limit;
-        if (renewalEl) renewalEl.textContent = plan.renewal_days;
-        if (priceEl) priceEl.textContent = plan.is_free ? 'Ücretsiz' : (plan.price + ' ' + (plan.currency || 'TRY'));
-        if (summaryPrice) summaryPrice.textContent = plan.is_free ? 'Ücretsiz' : (plan.price + ' ' + (plan.currency || 'TRY'));
-        if (summaryPlan) summaryPlan.textContent = plan.name;
-        if (totalEl) {
-            const unit = plan.is_free ? 0 : (Number(plan.price) || 0);
-            const total = unit * (Number(quantity) || 1);
-            totalEl.textContent = plan.is_free ? 'Ücretsiz' : (total + ' ' + (plan.currency || 'TRY'));
-        }
-    }, [plan, quantity]);
-
-    function isLoggedIn() {
-        return Boolean(localStorage.getItem('authToken') || sessionStorage.getItem('authToken')) || /(^|; )\s*token=/.test(document.cookie);
+  async function handleCheckout(e) {
+    e.preventDefault();
+    if (!isLoggedIn()) {
+      const target = location.pathname + location.search;
+      navigate('/login?redirect=' + encodeURIComponent(target), { replace: true });
+      return;
     }
 
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    function showPaymentStatus(msg, type) {
-        setPaymentStatus({ visible: true, msg, type });
+    if (!name.trim() || !email.trim() || !address.trim()) {
+      showPaymentStatus('Lütfen ad, e-posta ve adres bilgilerini doldurun.', 'error');
+      return;
     }
 
-    async function handleCheckout(e) {
-        e.preventDefault();
-        if (!isLoggedIn()) {
-            const target = location.pathname + location.search;
-            navigate('/login?redirect=' + encodeURIComponent(target), { replace: true });
-            return;
+    const payload = {
+      user_basket: [{ id: plan.id, quantity: Number(quantity) || 1 }],
+      user_name: name.trim(),
+      user_address: address.trim(),
+      user_phone: (phone || '').trim()
+    };
+
+    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+    const payBtn = payBtnRef.current;
+    if (payBtn) {
+      payBtn.disabled = true;
+      const origText = payBtn.textContent;
+      payBtn.textContent = 'İşleniyor...';
+      showPaymentStatus('Ödeme yönlendiriliyor...', 'loading');
+
+      try {
+        const res = await fetch('https://api.osmovo.com/api/payment/process', {
+          method: 'POST',
+          headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { 'Authorization': 'Bearer ' + token } : {}),
+          body: JSON.stringify(payload)
+        });
+
+        const contentType = res.headers.get('content-type') || '';
+        let data = null;
+        let text = null;
+        if (contentType.includes('application/json')) {
+          data = await res.json().catch(() => null);
+        } else {
+          text = await res.text().catch(() => null);
         }
 
-        if (!name.trim() || !email.trim() || !address.trim()) {
-            showPaymentStatus('Lütfen ad, e-posta ve adres bilgilerini doldurun.', 'error');
-            return;
+        if (res.ok) {
+          // Try to extract iframe src from JSON or raw HTML
+          let iframeUrl = null;
+
+          if (data) {
+            if (typeof data === 'string') text = data;
+            if (data.iframe) iframeUrl = data.iframe;
+            if (!iframeUrl && data.url) iframeUrl = data.url;
+            if (!iframeUrl && data.redirect_url) iframeUrl = data.redirect_url;
+            if (!iframeUrl && data.payment_url) iframeUrl = data.payment_url;
+            if (!iframeUrl && data.html) text = data.html;
+          }
+
+          if (text && !iframeUrl) {
+            const m = String(text).match(/<iframe[^>]*src=["']([^"']+)["']/i);
+            if (m) iframeUrl = m[1];
+          }
+
+          if (iframeUrl) {
+            setIframeSrc(iframeUrl);
+            setShowIframe(true);
+            setShowPaymentModal(true);
+            showPaymentStatus((data && data.message) || 'Ödeme işlemi başlatıldı. Ödeme formu aşağıda açıldı.', 'success');
+          } else {
+            showPaymentStatus((data && (data.message || data.error)) || 'Ödeme işlemi başlatıldı. Yönlendiriliyorsunuz...', 'success');
+            // If server returned a redirect url, navigate
+            if (data && data.redirect_url) window.location.href = data.redirect_url;
+          }
+        } else {
+          const err = (data && (data.error || data.message)) || 'Ödeme sırasında hata oluştu.';
+          showPaymentStatus(err, 'error');
         }
-
-        const payload = {
-            user_basket: [{ id: plan.id, quantity: Number(quantity) || 1 }],
-            user_name: name.trim(),
-            user_address: address.trim(),
-            user_phone: (phone || '').trim()
-        };
-
-        const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-        const payBtn = payBtnRef.current;
+      } catch (err) {
+        console.error('Payment error', err);
+        showPaymentStatus('Sunucuya bağlanırken hata oluştu. Lütfen tekrar deneyin.', 'error');
+      } finally {
         if (payBtn) {
-            payBtn.disabled = true;
-            const origText = payBtn.textContent;
-            payBtn.textContent = 'İşleniyor...';
-            showPaymentStatus('Ödeme yönlendiriliyor...', 'loading');
-
-            try {
-                const res = await fetch('https://api.osmovo.com/api/payment/process', {
-                    method: 'POST',
-                    headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { 'Authorization': 'Bearer ' + token } : {}),
-                    body: JSON.stringify(payload)
-                });
-
-                const data = await res.json().catch(() => ({}));
-
-                if (res.ok) {
-                    if (data.redirect) {
-                        try {
-                            window.location.href = data.redirect;
-                            return;
-                        } catch (e) {
-                            window.open(data.redirect, '_blank');
-                            return;
-                        }
-                    }
-
-                    showPaymentStatus(data.message || 'Ödeme işlemi başlatıldı. Yönlendiriliyorsunuz...', 'success');
-
-                    if (data.next_url) {
-                        setTimeout(() => window.location.href = data.next_url, 1200);
-                        return;
-                    }
-
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1400);
-                } else {
-                    const err = data.error || data.message || 'Ödeme sırasında hata oluştu.';
-                    showPaymentStatus(err, 'error');
-                }
-            } catch (err) {
-                console.error('Payment error', err);
-                showPaymentStatus('Sunucuya bağlanırken hata oluştu. Lütfen tekrar deneyin.', 'error');
-            } finally {
-                if (payBtn) {
-                    payBtn.disabled = false;
-                    payBtn.textContent = 'Güvenli Ödeme';
-                }
-            }
+          payBtn.disabled = false;
+          payBtn.textContent = 'Güvenli Ödeme';
         }
+      }
     }
+  }
 
-    return (
-        <CheckoutWrapper>
-            <Container>
-                <MainCard>
-                    <Header>
-                        <HeaderTitle>Güvenli Ödeme</HeaderTitle>
-                        <HeaderSubtitle>Plan seçiminizi tamamlayın ve güvenli ödeme yapın</HeaderSubtitle>
-                    </Header>
+  return (
+    <CheckoutWrapper>
+      <Container>
+        <MainCard>
+          <Header>
+            <HeaderTitle>Güvenli Ödeme</HeaderTitle>
+            <HeaderSubtitle>Plan seçiminizi tamamlayın ve güvenli ödeme yapın</HeaderSubtitle>
+          </Header>
 
-                    <Content>
-                        <PlanHeader>
-                            <PlanInfo>
-                                <PlanTitle id="plan-name">Plan</PlanTitle>
-                                <PlanDescription id="plan-desc">Plan açıklaması</PlanDescription>
-                            </PlanInfo>
-                            <PlanPricing>
-                                <PriceDisplay id="plan-price">₺0.00</PriceDisplay>
-                                <PriceInterval id="plan-interval">Aylık</PriceInterval>
-                            </PlanPricing>
-                        </PlanHeader>
+          <Content>
+            <PlanHeader>
+              <PlanInfo>
+                <PlanTitle id="plan-name">Plan</PlanTitle>
+                <PlanDescription id="plan-desc">Plan açıklaması</PlanDescription>
+              </PlanInfo>
+              <PlanPricing>
+                <PriceDisplay id="plan-price">₺0.00</PriceDisplay>
+                <PriceInterval id="plan-interval">Aylık</PriceInterval>
+              </PlanPricing>
+            </PlanHeader>
 
-                        <MainContent>
-                            <FormSection>
-                                <SectionTitle>Plan Özellikleri</SectionTitle>
-                                <PlanFeatures id="plan-features">
-                                    <FeatureItem>Depolama: <strong id="plan-storage">-</strong></FeatureItem>
-                                    <FeatureItem>Soru limiti: <strong id="plan-questions">-</strong></FeatureItem>
-                                    <FeatureItem>Yenileme: <strong id="plan-renewal">-</strong> gün</FeatureItem>
-                                </PlanFeatures>
+            <MainContent>
+              <FormSection>
+                <SectionTitle>Plan Özellikleri</SectionTitle>
+                <PlanFeatures id="plan-features">
+                  <FeatureItem>Depolama: <strong id="plan-storage">-</strong></FeatureItem>
+                  <FeatureItem>Soru limiti: <strong id="plan-questions">-</strong></FeatureItem>
+                  <FeatureItem>Yenileme: <strong id="plan-renewal">-</strong> gün</FeatureItem>
+                </PlanFeatures>
 
-                                <SectionTitle>Fatura & Gönderim Bilgileri</SectionTitle>
-                                <form id="checkout-form" onSubmit={handleCheckout}>
-                                    <FormGroup>
-                                        <Label htmlFor="name">Ad Soyad *</Label>
-                                        <Input id="name" name="name" required placeholder="Ahmet Yılmaz" value={name} onChange={(e) => setName(e.target.value)} />
-                                    </FormGroup>
+                <SectionTitle>Fatura & Gönderim Bilgileri</SectionTitle>
+                <form id="checkout-form" onSubmit={handleCheckout}>
+                  <FormGroup>
+                    <Label htmlFor="name">Ad Soyad *</Label>
+                    <Input id="name" name="name" required placeholder="Ahmet Yılmaz" value={name} onChange={(e) => setName(e.target.value)} />
+                  </FormGroup>
 
-                                    <FormGroup>
-                                        <Label htmlFor="email">Email Adresi *</Label>
-                                        <Input id="email" type="email" name="email" required placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                    </FormGroup>
+                  <FormGroup>
+                    <Label htmlFor="email">Email Adresi *</Label>
+                    <Input id="email" type="email" name="email" required placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  </FormGroup>
 
-                                    <FormGroup>
-                                        <Label htmlFor="address">Adres *</Label>
-                                        <Input id="address" name="address" type="text" required placeholder="Mah. Cad. No:..." value={address} onChange={(e) => setAddress(e.target.value)} />
-                                    </FormGroup>
+                  <FormGroup>
+                    <Label htmlFor="address">Adres *</Label>
+                    <Input id="address" name="address" type="text" required placeholder="Mah. Cad. No:..." value={address} onChange={(e) => setAddress(e.target.value)} />
+                  </FormGroup>
 
-                                    <FieldRow>
-                                        <FormGroup>
-                                            <Label htmlFor="phone">Telefon</Label>
-                                            <Input id="phone" name="phone" type="text" placeholder="0555xxxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                                        </FormGroup>
-                                        <div></div>
-                                    </FieldRow>
+                  <FieldRow>
+                    <FormGroup>
+                      <Label htmlFor="phone">Telefon</Label>
+                      <Input id="phone" name="phone" type="text" placeholder="0555xxxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    </FormGroup>
+                    <div></div>
+                  </FieldRow>
 
-                                    <PrimaryButton id="pay-btn" type="submit" ref={payBtnRef}>
-                                        Güvenli Ödeme
-                                    </PrimaryButton>
+                  <PrimaryButton id="pay-btn" type="submit" ref={payBtnRef}>
+                    Güvenli Ödeme
+                  </PrimaryButton>
 
-                                    <SecurityBadge>
-                                        256-bit SSL ile korunmaktadır
-                                    </SecurityBadge>
-                                </form>
-                            </FormSection>
+                  <SecurityBadge>
+                    256-bit SSL ile korunmaktadır
+                  </SecurityBadge>
+                </form>
 
-                            <CheckoutSummary>
-                                <SummaryHeader>Sipariş Özeti</SummaryHeader>
-
-                                <SummaryItem>
-                                    <span id="summary-plan">Plan</span>
-                                    <strong id="summary-price">₺0.00</strong>
-                                </SummaryItem>
-
-                                <SummaryTotal>
-                                    <TotalLabel>Toplam Tutar</TotalLabel>
-                                    <TotalPrice>
-                                        <span id="total-label">Ara Toplam</span>
-                                        <span id="total-price">₺0.00</span>
-                                    </TotalPrice>
-                                </SummaryTotal>
-
-                                <PaymentStatus 
-                                    visible={paymentStatus.visible} 
-                                    type={paymentStatus.type} 
-                                    msg={paymentStatus.msg} 
-                                />
-                            </CheckoutSummary>
-                        </MainContent>
-                    </Content>
-
-                    <Modal isOpen={showTermsModal} onClose={() => setShowTermsModal(false)}>
-                        <TermsText />
-                    </Modal>
-
-                    <Modal isOpen={showContractModal} onClose={() => setShowContractModal(false)}>
-                        <ContractText plan={plan} name={name} address={address} phone={phone} email={email} />
-                    </Modal>
-
-                    <ContractFooter 
-                        onTermsClick={() => setShowTermsModal(true)}
-                        onContractClick={() => setShowContractModal(true)}
+                {showIframe && iframeSrc && !showPaymentModal && (
+                  <div style={{ marginTop: '20px' }} className="paytr-container">
+                    <iframe
+                      src={iframeSrc}
+                      id="paytriframe"
+                      title="payment-iframe"
+                      frameBorder="0"
+                      scrolling="no"
+                      style={{ width: '100%', minHeight: '640px', border: 'none' }}
                     />
-                </MainCard>
-            </Container>
+                  </div>
+                )}
+              </FormSection>
 
-            {/* Responsive Styles */}
-            <style jsx>{`
+              <CheckoutSummary>
+                <SummaryHeader>Sipariş Özeti</SummaryHeader>
+
+                <SummaryItem>
+                  <span id="summary-plan">Plan</span>
+                  <strong id="summary-price">₺0.00</strong>
+                </SummaryItem>
+
+                <SummaryTotal>
+                  <TotalLabel>Toplam Tutar</TotalLabel>
+                  <TotalPrice>
+                    <span id="total-label">Ara Toplam</span>
+                    <span id="total-price">₺0.00</span>
+                  </TotalPrice>
+                </SummaryTotal>
+
+                <PaymentStatus
+                  visible={paymentStatus.visible}
+                  type={paymentStatus.type}
+                  msg={paymentStatus.msg}
+                />
+              </CheckoutSummary>
+            </MainContent>
+          </Content>
+
+          <Modal isOpen={showTermsModal} onClose={() => setShowTermsModal(false)}>
+            <TermsText />
+          </Modal>
+
+          <Modal isOpen={showContractModal} onClose={() => setShowContractModal(false)}>
+            <ContractText plan={plan} name={name} address={address} phone={phone} email={email} />
+          </Modal>
+
+          {/* Payment modal - show iframe centered over the page */}
+          <Modal isOpen={showPaymentModal} onClose={() => { setShowPaymentModal(false); setShowIframe(false); setIframeSrc(null); }}>
+            <div style={{ width: '100%', maxWidth: '960px' }}>
+              {iframeSrc ? (
+                <iframe
+                  src={iframeSrc}
+                  id="paytriframe"
+                  title="payment-iframe-modal"
+                  frameBorder="0"
+                  scrolling="no"
+                  style={{ width: '100%', minHeight: '640px', border: 'none' }}
+                />
+              ) : (
+                <div style={{ padding: '24px', textAlign: 'center' }}>Ödeme yükleniyor...</div>
+              )}
+            </div>
+          </Modal>
+
+          <ContractFooter
+            onTermsClick={() => setShowTermsModal(true)}
+            onContractClick={() => setShowContractModal(true)}
+          />
+        </MainCard>
+      </Container>
+
+      {/* Responsive Styles */}
+      <style jsx>{`
                 @media (max-width: 1024px) {
                     .main-content {
                         grid-template-columns: 1fr !important;
@@ -1002,126 +1086,126 @@ export default function Checkout() {
                     }
                 }
             `}</style>
-        </CheckoutWrapper>
-    );
+    </CheckoutWrapper>
+  );
 }
 
 const ContractText = ({ plan, name, address, phone, email }) => (
-    <div style={{ fontSize: '14px', color: '#3a3a3b', whiteSpace: 'pre-line', maxHeight: '80vh', overflowY: 'auto', padding: '24px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-            <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#3a3a3b', margin: 0 }}>MESAFELİ SATIŞ SÖZLEŞMESİ</h1>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div>
-                <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>1. TARAFLAR</h2>
-                <div style={{ marginLeft: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div>
-                        <p style={{ fontWeight: '500' }}>1.1 Satıcıya Ait Bilgiler</p>
-                        <div style={{ marginLeft: '16px', marginTop: '4px' }}>
-                            <p>Unvanı: POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</p>
-                            <p>Adres: KINIKLI MAH. HÜSEYİN YILMAZ CAD. PAMUKKALE ÜNİVERSİTESİ NO: 67 İÇ KAPI NO: 17-18 PAMUKKALE/ DENİZLİ</p>
-                            <p>Telefon: 0 (258) 215 51 05</p>
-                            <p>E-posta: info@osmovo.com</p>
-                            <p>Mersis Numarası: 07322178480700001</p>
-                            <p>KEP Adresi: poloplus@hs03.kep.tr</p>
-                        </div>
-                    </div>
-                    <div>
-                        <p style={{ fontWeight: '500' }}>1.2 Alıcıya Ait Bilgiler</p>
-                        <div style={{ marginLeft: '16px', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <div>
-                                <p>Adı Soyadı: {name || ''}</p>
-                                <p>Adresi: {address || ''}</p>
-                                <p>Telefon: {phone || ''}</p>
-                                <p>E-posta: {email || ''}</p>
-                                <p>Tarih: {new Date().toLocaleDateString()}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>2. SÖZLEŞMENİN KONUSU VE ÜRÜN</h2>
-                <div style={{ marginLeft: '16px' }}>
-                    <p>
-                        İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
-                    </p>
-                </div>
-            </div>
-
-            <div>
-                <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>3. SÖZLEŞMEYE KONU HİZMET BİLGİLERİ VE SATIŞ BEDELİ</h2>
-                <div style={{ marginLeft: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    <div>
-                        <p style={{ fontWeight: '500' }}>3.1. Sözleşme konusu hizmetin nitelikleri, türü, satış bedeli ve ödeme koşulları ilgili faturada belirtilmektedir.</p>
-                        <table style={{ width: '100%', marginTop: '16px', marginBottom: '16px', borderCollapse: 'collapse', border: '1px solid #dee2e6' }}>
-                            <thead>
-                                <tr style={{ backgroundColor: '#f8f9fa' }}>
-                                    <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'left', fontWeight: '600' }}>
-                                        Ürün Adı
-                                    </th>
-                                    <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center', fontWeight: '600', width: '96px' }}>
-                                        Adet
-                                    </th>
-                                    <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right', fontWeight: '600', width: '192px' }}>
-                                        Satış Tutarı (KDV dahil)
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td style={{ border: '1px solid #dee2e6', padding: '16px' }}>
-                                        {plan?.name || '-'}
-                                    </td>
-                                    <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center' }}>
-                                        1
-                                    </td>
-                                    <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
-                                        {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
-                                    </td>
-                                </tr>
-                                <tr style={{ backgroundColor: '#f8f9fa', fontWeight: '600' }}>
-                                    <td colSpan={2} style={{ border: '1px solid #dee2e6', padding: '16px' }}>
-                                        Net Tutar
-                                    </td>
-                                    <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
-                                        {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <p>2. Satın alınacak aktivasyon kodu ayrıca ALICI'nın adresine gönderilmeyecektir.</p>
-            </div>
-            <div>
-                <p>
-                    3. Tüketici (ALICI), 14 (ondört) gün içinde herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin işbu Mesafeli Satış Sözleşmesi'nden cayma hakkına sahiptir. Cayma hakkı süresi, hizmet ifasına ilişkin sözleşmelerde sözleşmenin kurulduğu gün; mal teslimine ilişkin sözleşmelerde ise tüketicinin veya tüketici tarafından belirlenen üçüncü kişinin malı teslim aldığı gün başlar. Ancak tüketici, sözleşmenin kurulmasından malın teslimine kadar olan süre içinde de cayma hakkını kullanabilir. Cayma hakkı süresinin belirlenmesinde; SATICI 'nın POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olmadığı ürün satışı ve teslimine ilişkin mesafeli satış sözleşmelerinde POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ sözleşmenin tarafı olmadığından TÜKETİCİ' nin POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ'ne karşı cayma hakkı, bedel iadesi veya ürün değişimi talep hakkı yoktur.
-                </p>
-            </div>
-            <div>
-                <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>Cayma Bildirimi</h2>
-                <div style={{ marginLeft: '16px' }}>
-                    <p>E-Posta: info@osmovo.com</p>
-                    <p>Posta Adresi: KINIKLI MAH. HÜSEYİN YILMAZ CAD. PAMUKKALE ÜNİVERSİTESİ NO: 67 İÇ KAPI NO: 17-18 PAMUKKALE/ DENİZLİ</p>
-                </div>
-            </div>
-            <div>
-                <p>
-                    Tüketici aşağıdaki sözleşmelerde cayma hakkını kullanamaz:
-                </p>
-                <ul style={{ listStyle: 'disc', marginLeft: '24px', marginTop: '8px' }}>
-                    <li>Fiyatı finansal piyasalardaki dalgalanmalara bağlı olarak değişen ve SATICI veya sağlayıcının kontrolünde olmayan mal veya hizmetlere ilişkin sözleşmeler.</li>
-                    <li>Tüketicinin istekleri veya kişisel ihtiyaçları doğrultusunda, kişiye özel hazırlanan ürün ve mallara ilişkin sözleşmeler.</li>
-                    <li>Malın tesliminden sonra ambalaj, bant, mühür, paket gibi koruyucu unsurları açılmış olması halinde maddi ortamda sunulan kitap, dijital içerik ve bilgisayar sarf malzemelerine ilişkin sözleşmeler.</li>
-                    <li>Elektronik ortamda anında ifa edilen hizmetler veya tüketiciye anında teslim edilen gayrimaddi mallara ilişkin sözleşmeler.</li>
-                    <li>Cayma hakkı süresi sona ermeden önce, tüketicinin onayı ile ifasına başlanan hizmetlere ilişkin sözleşmeler.</li>
-                </ul>
-            </div>
-        </div>
+  <div style={{ fontSize: '14px', color: '#3a3a3b', whiteSpace: 'pre-line', maxHeight: '80vh', overflowY: 'auto', padding: '24px' }}>
+    <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+      <h1 style={{ fontSize: '20px', fontWeight: '600', color: '#3a3a3b', margin: 0 }}>MESAFELİ SATIŞ SÖZLEŞMESİ</h1>
     </div>
+
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div>
+        <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>1. TARAFLAR</h2>
+        <div style={{ marginLeft: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <p style={{ fontWeight: '500' }}>1.1 Satıcıya Ait Bilgiler</p>
+            <div style={{ marginLeft: '16px', marginTop: '4px' }}>
+              <p>Unvanı: POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ</p>
+              <p>Adres: KINIKLI MAH. HÜSEYİN YILMAZ CAD. PAMUKKALE ÜNİVERSİTESİ NO: 67 İÇ KAPI NO: 17-18 PAMUKKALE/ DENİZLİ</p>
+              <p>Telefon: 0 (258) 215 51 05</p>
+              <p>E-posta: info@osmovo.com</p>
+              <p>Mersis Numarası: 07322178480700001</p>
+              <p>KEP Adresi: poloplus@hs03.kep.tr</p>
+            </div>
+          </div>
+          <div>
+            <p style={{ fontWeight: '500' }}>1.2 Alıcıya Ait Bilgiler</p>
+            <div style={{ marginLeft: '16px', marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div>
+                <p>Adı Soyadı: {name || ''}</p>
+                <p>Adresi: {address || ''}</p>
+                <p>Telefon: {phone || ''}</p>
+                <p>E-posta: {email || ''}</p>
+                <p>Tarih: {new Date().toLocaleDateString()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>2. SÖZLEŞMENİN KONUSU VE ÜRÜN</h2>
+        <div style={{ marginLeft: '16px' }}>
+          <p>
+            İşbu Sözleşme'nin konusu, ALICI'nın SATICI'ya www.osmovo.com uzantılı web sitesi ve buna bağlı tüm uygulamalar ("İnternet Sitesi") üzerinden elektronik ortamda sipariş verdiği, osmovo Online Üyelik Sözleşmesi, Ön Bilgilendirme Formu ve internet sitesinde nitelikleri ve satış bedeli belirtilen hizmetin ("Hizmet") sunumu ve satışı ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkındaki Kanun ("6502 Sayılı Kanun") ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince Taraflar'ın karşılıklı hak ve yükümlülüklerinin belirlenmesidir.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>3. SÖZLEŞMEYE KONU HİZMET BİLGİLERİ VE SATIŞ BEDELİ</h2>
+        <div style={{ marginLeft: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <p style={{ fontWeight: '500' }}>3.1. Sözleşme konusu hizmetin nitelikleri, türü, satış bedeli ve ödeme koşulları ilgili faturada belirtilmektedir.</p>
+            <table style={{ width: '100%', marginTop: '16px', marginBottom: '16px', borderCollapse: 'collapse', border: '1px solid #dee2e6' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f8f9fa' }}>
+                  <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'left', fontWeight: '600' }}>
+                    Ürün Adı
+                  </th>
+                  <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center', fontWeight: '600', width: '96px' }}>
+                    Adet
+                  </th>
+                  <th style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right', fontWeight: '600', width: '192px' }}>
+                    Satış Tutarı (KDV dahil)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style={{ border: '1px solid #dee2e6', padding: '16px' }}>
+                    {plan?.name || '-'}
+                  </td>
+                  <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'center' }}>
+                    1
+                  </td>
+                  <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
+                    {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
+                  </td>
+                </tr>
+                <tr style={{ backgroundColor: '#f8f9fa', fontWeight: '600' }}>
+                  <td colSpan={2} style={{ border: '1px solid #dee2e6', padding: '16px' }}>
+                    Net Tutar
+                  </td>
+                  <td style={{ border: '1px solid #dee2e6', padding: '16px', textAlign: 'right' }}>
+                    {plan?.price ? `₺${parseFloat(plan.price).toFixed(2)}` : '-'}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div>
+        <p>2. Satın alınacak aktivasyon kodu ayrıca ALICI'nın adresine gönderilmeyecektir.</p>
+      </div>
+      <div>
+        <p>
+          3. Tüketici (ALICI), 14 (ondört) gün içinde herhangi bir gerekçe göstermeksizin ve cezai şart ödemeksizin işbu Mesafeli Satış Sözleşmesi'nden cayma hakkına sahiptir. Cayma hakkı süresi, hizmet ifasına ilişkin sözleşmelerde sözleşmenin kurulduğu gün; mal teslimine ilişkin sözleşmelerde ise tüketicinin veya tüketici tarafından belirlenen üçüncü kişinin malı teslim aldığı gün başlar. Ancak tüketici, sözleşmenin kurulmasından malın teslimine kadar olan süre içinde de cayma hakkını kullanabilir. Cayma hakkı süresinin belirlenmesinde; SATICI 'nın POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ olmadığı ürün satışı ve teslimine ilişkin mesafeli satış sözleşmelerinde POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ sözleşmenin tarafı olmadığından TÜKETİCİ' nin POLO PLUS MAKİNA ARGE DANIŞMANLIK İMALAT SANAYİ VE TİCARET LİMİTED ŞİRKETİ'ne karşı cayma hakkı, bedel iadesi veya ürün değişimi talep hakkı yoktur.
+        </p>
+      </div>
+      <div>
+        <h2 style={{ fontWeight: '600', color: '#3a3a3b', marginBottom: '12px', fontSize: '16px' }}>Cayma Bildirimi</h2>
+        <div style={{ marginLeft: '16px' }}>
+          <p>E-Posta: info@osmovo.com</p>
+          <p>Posta Adresi: KINIKLI MAH. HÜSEYİN YILMAZ CAD. PAMUKKALE ÜNİVERSİTESİ NO: 67 İÇ KAPI NO: 17-18 PAMUKKALE/ DENİZLİ</p>
+        </div>
+      </div>
+      <div>
+        <p>
+          Tüketici aşağıdaki sözleşmelerde cayma hakkını kullanamaz:
+        </p>
+        <ul style={{ listStyle: 'disc', marginLeft: '24px', marginTop: '8px' }}>
+          <li>Fiyatı finansal piyasalardaki dalgalanmalara bağlı olarak değişen ve SATICI veya sağlayıcının kontrolünde olmayan mal veya hizmetlere ilişkin sözleşmeler.</li>
+          <li>Tüketicinin istekleri veya kişisel ihtiyaçları doğrultusunda, kişiye özel hazırlanan ürün ve mallara ilişkin sözleşmeler.</li>
+          <li>Malın tesliminden sonra ambalaj, bant, mühür, paket gibi koruyucu unsurları açılmış olması halinde maddi ortamda sunulan kitap, dijital içerik ve bilgisayar sarf malzemelerine ilişkin sözleşmeler.</li>
+          <li>Elektronik ortamda anında ifa edilen hizmetler veya tüketiciye anında teslim edilen gayrimaddi mallara ilişkin sözleşmeler.</li>
+          <li>Cayma hakkı süresi sona ermeden önce, tüketicinin onayı ile ifasına başlanan hizmetlere ilişkin sözleşmeler.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 );
